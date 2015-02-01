@@ -1,6 +1,10 @@
 # RandomLasers
 Masters project modelling random lasers
 
+###Shortcuts  
+**[29 January](#29-january)**  
+**[1 Febrary](#1-february)**  
+
 ___________
 # 1 February  
 Update  
