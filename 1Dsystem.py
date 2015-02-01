@@ -50,7 +50,7 @@ def I_G(t):
 def I_R(t):
 	return I_R0*np.sqrt(4*np.log(2)/np.pi)*np.exp(-kappa_e*z)*np.exp(-4*np.log(2)*(t-t_R-z/c)**2/(tau_R**2))
 
-def create_A_matrix(beta):
+def create_inv_A_matrix(beta):
 	"""Defines the matrix multipling the time derivative and inverts it"""
 	A =  np.diagflat([-beta for i in range(J-1)], -1) + np.diagflat([0]+[1.+2.*beta for i in range(J-2)]+[0]) + np.diagflat([-beta for i in range(J-1)], 1)
 	return np.linalg.inv(A)
@@ -70,9 +70,9 @@ N_1 = np.zeros(z.shape[0])
 beta = D*dt/(2.*dx**2)
 
 #Declare matrices for Crank-Nicolson method
-A_G = create_A_matrix(beta)
-A_R = create_A_matrix(beta)
-A_A = create_A_matrix(beta)
+A_G = create_inv_A_matrix(beta)
+A_R = create_inv_A_matrix(beta)
+A_A = create_inv_A_matrix(beta)
 
 B_G = create_B_matrix(beta)
 B_R = create_B_matrix(beta)
