@@ -26,7 +26,7 @@ L = 8.e-4 #length of slap
 dx = L/J #space steps across slap
 z = np.arange(0,L,dx) # array of space steps
 
-N = 1000 #number of time steps
+N = 10000 #number of time steps
 T = 1e-3 #length of time
 dt = T/N #time steps
 
@@ -52,13 +52,13 @@ def I_R(t):
 
 def create_A_matrix(beta):
 	"""Defines the matrix multipling the time derivative and inverts it"""
-	A =  np.diagflat([-beta for i in range(J-1)], -1) + np.diagflat([1.+beta]+[1.+2.*beta for i in range(J-2)]+[1.+beta]) + np.diagflat([-beta for i in range(J-1)], 1)
+	A =  np.diagflat([-beta for i in range(J-1)], -1) + np.diagflat([0]+[1.+2.*beta for i in range(J-2)]+[0]) + np.diagflat([-beta for i in range(J-1)], 1)
 	return np.linalg.inv(A)
 	#consider sparse matrices? using scipy.sparse.diags http://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.sparse.diags.html
 
 def create_B_matrix(beta):
 	"""Defines the matrix multipling the laplacian """
-	return np.diagflat([beta for i in range(J-1)], -1) + np.diagflat([1.-beta]+[1.-2.*beta for i in range(J-2)]+[1.-beta]) + np.diagflat([beta for i in range(J-1)], 1)
+	return np.diagflat([beta for i in range(J-1)], -1) + np.diagflat([0]+[1.-2.*beta for i in range(J-2)]+[0]) + np.diagflat([beta for i in range(J-1)], 1)
 
 #Define intial conditions
 W_G = np.zeros(z.shape[0])
