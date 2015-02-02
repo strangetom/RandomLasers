@@ -1,5 +1,6 @@
 import numpy as np
-import scipy.constants as spc
+from scipy import constants as spc
+from numba import jit
 
 #define constants
 sig_abs = 3.0e-24 #absorption cross section
@@ -26,11 +27,12 @@ L = 8.e-4 #length of slap
 dx = L/J #space steps across slap
 z = np.arange(0,L,dx) # array of space steps
 
-N = 10000 #number of time steps
+N = 1000 #number of time steps
 T = 1e-3 #length of time
 dt = T/N #time steps
 
-
+#Define beta value
+beta = D*dt/(2.*dx**2)
 
 def f(N_1, W_G, I_G_vals):
 	return -1*sig_abs*v*(N_t-N_1)*W_G + I_G_vals/l
@@ -45,7 +47,7 @@ def q(N_1, W_G, W_R, W_A):
 	return sig_abs*v*(N_t-N_1)*W_G - sig_em*v*N_1*(W_R+W_A) - N_1/tau_e
 
 def I_G(t):
-	return I_R0*np.sqrt(4*np.log(2)/np.pi)*np.exp(-kappa_e*z)*np.exp(-4*np.log(2)*(t-t_G-z/c)**2/(tau_R**2))
+	return I_R0*np.sqrt(4*np.log(2)/np.pi)*np.exp(-kappa_e*z)*np.exp(-4*np.log(2)*(t-t_G-z/c)**2/(tau_G**2))
 
 def I_R(t):
 	return I_R0*np.sqrt(4*np.log(2)/np.pi)*np.exp(-kappa_e*z)*np.exp(-4*np.log(2)*(t-t_R-z/c)**2/(tau_R**2))
@@ -66,9 +68,6 @@ W_R = np.zeros(z.shape[0])
 W_A = np.zeros(z.shape[0])
 N_1 = np.zeros(z.shape[0])
 
-#Define beta values
-beta = D*dt/(2.*dx**2)
-
 #Declare matrices for Crank-Nicolson method
 A_G = create_inv_A_matrix(beta)
 A_R = create_inv_A_matrix(beta)
@@ -87,7 +86,7 @@ for timestep in range(N):
 	#W_G_new = np.linalg.solve(A_G, (B_G.dot(W_G) + f(N_1,W_G,I_G_vals)) )
 	W_R_new = np.dot(A_R, (B_R.dot(W_R) + g(N_1,W_R,I_R_vals)) )
 	#W_R_new = np.linalg.solve(A_R, (B_R.dot(W_R) + g(N_1,W_R,I_R_vals)) )
-	W_A_new = np.dot(A_A,  (B_A.dot(W_A) + h(N_1,W_A)) )
+	W_A_new = np.dot(A_A, (B_A.dot(W_A) + h(N_1,W_A)) )
 	#W_A_new = np.linalg.solve(A_A,  (B_A.dot(W_A) + h(N_1,W_A)) )
 	N_1_new = N_1 + dt*q(N_1, W_G, W_R, W_A)
 
@@ -112,5 +111,9 @@ for timestep in range(N):
 		I_G_store = np.vstack((I_G_store, I_G_vals))
 		I_R_store = np.vstack((I_R_store, I_R_vals))
 		temp_store = np.vstack((temp_store,f(N_1,W_G,I_G_vals)))
+
+	if timestep == 1:
+		break
+
 
 	print(timestep,end='\r')
