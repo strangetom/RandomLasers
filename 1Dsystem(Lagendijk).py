@@ -72,6 +72,7 @@ B_G = create_B_matrix(beta)
 B_R = create_B_matrix(beta)
 B_A = create_B_matrix(beta)
 
+
 #Run numerical calculation
 for timestep in range(N):
 	I_G_vals = I_G(timestep*dt)
@@ -88,19 +89,22 @@ for timestep in range(N):
 	W_A = W_A_new
 	N_1 = N_1_new
 
-	if timestep == 0:
+	if timestep*dx == 0:
 		W_G_store = W_G
 		W_R_store = W_R
 		W_A_store = W_A
 		N_1_store = N_1
 		I_G_store = I_G_vals
 		I_R_store = I_R_vals
-	else:
+	elif timestep*dx < 5e-8:
 		W_G_store = np.vstack((W_G_store, W_G))
 		W_R_store = np.vstack((W_R_store, W_R))
 		W_A_store = np.vstack((W_A_store, W_A))
 		N_1_store = np.vstack((N_1_store, N_1))
 		I_G_store = np.vstack((I_G_store, I_G_vals))
 		I_R_store = np.vstack((I_R_store, I_R_vals))
+	else:
+		W_A_store = np.vstack((W_A_store, W_A))
+		N_1_store = np.vstack((N_1_store, N_1))
 
 	print(timestep,end='\r')
