@@ -18,7 +18,8 @@ Figure 3 (below), shows how N_1 evolves.
 ![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/03Feb/03.02.15.N_1.png "Figure 3")  
 _(Note: all times are in nanoseconds)_  
 Figures 2 and 3 follow the same shape as similar figures in Lagendijk's paper, as does the graph for the probe (not shown).    
-The graph for the amplified spontaneous emmission is a bit funky, it may be that it decays over a much longer time.   
+The graph for the amplified spontaneous emmission is a bit funky, it may be that it decays over a much longer time.  
+* Using @jit in numba doesn't speed things up at all in it's current state.  
 
 # 2 February  
 * Need to indentify the dominant terms in the equations and find out why the calculation runs away.  
