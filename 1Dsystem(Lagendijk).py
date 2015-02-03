@@ -26,8 +26,8 @@ L = 8.e-4 #length of slap
 dx = L/J #space steps across slap
 z = np.arange(0,L,dx) # array of space steps
 
-N = 100000 #number of time steps
-T = 1.e-7 #length of time
+N = 10000000 #number of time steps
+T = 1.e-5 #length of time
 dt = T/N #time steps
 
 #Define beta value
@@ -96,7 +96,7 @@ for timestep in range(N):
 	W_A = W_A_new
 	N_1 = N_1_new
 
-	if timestep*dx < 5e-8:
+	if timestep*dt < 5e-8:
 		W_G_store.append(W_G)
 		W_R_store.append(W_R)
 		W_A_store.append(W_A)
