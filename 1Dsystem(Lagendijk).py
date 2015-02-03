@@ -1,6 +1,5 @@
 import numpy as np
 from scipy import constants as spc
-#from numba import jit, vectorize
 
 #define constants
 sig_abs = 3.0e-24 #absorption cross section
@@ -32,7 +31,7 @@ T = 1.e-7 #length of time
 dt = T/N #time steps
 
 #Define beta value
-beta = D*dt/(2.*dx**2)
+beta = D*dt/(dx**2)
 
 
 def f(N_1, W_G, I_G_vals):
@@ -58,11 +57,6 @@ def I_G(t):
 def I_R(t):
 	return I_R0*np.sqrt(4*np.log(2)/np.pi)*np.exp(-kappa_e*z)*np.exp(-4*np.log(2)*(t-t_R-z/c)**2/(tau_R**2))
 
-def create_inv_A_matrix(beta):
-	"""Defines the matrix multipling the time derivative and inverts it"""
-	A =  np.diagflat([-beta for i in range(J-1)], -1) + np.diagflat([0]+[1.+2.*beta for i in range(J-2)]+[0]) + np.diagflat([-beta for i in range(J-1)], 1)
-	return np.linalg.inv(A)
-	#consider sparse matrices? using scipy.sparse.diags http://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.sparse.diags.html
 
 def create_B_matrix(beta):
 	"""Defines the matrix multipling the laplacian """
@@ -73,11 +67,6 @@ W_G = np.zeros(z.shape[0])
 W_R = np.zeros(z.shape[0])
 W_A = np.zeros(z.shape[0])
 N_1 = np.zeros(z.shape[0])
-
-#Declare matrices for Crank-Nicolson method
-A_G = create_inv_A_matrix(beta)
-A_R = create_inv_A_matrix(beta)
-A_A = create_inv_A_matrix(beta)
 
 B_G = create_B_matrix(beta)
 B_R = create_B_matrix(beta)
@@ -93,16 +82,6 @@ for timestep in range(N):
 	W_A_new = B_A.dot(W_A) + dt*h(N_1,W_A)
 	N_1_new = N_1 + dt*q(N_1, W_G, W_R, W_A)
 	
-	"""
-	RK4 for N_1 below
-	"""
-	"""
-	k1 = q(N_1, W_G, W_R, W_A)
-	k2 = q(N_1 + dt*k1/2, W_G + dt*k1/2, W_R + dt*k1/2, W_A + dt*k1/2)
-	k3 = q(N_1 + dt*k2/2, W_G + dt*k2/2, W_R + dt*k2/2, W_A + dt*k2/2)
-	k4 = q(N_1 + dt*k3, W_G + dt*k3, W_R + dt*k3, W_A + dt*k3)
-	N_1_new = N_1 + dt*(k1 + 2*k2 + 2*k3 + k4)/6
-	"""
 
 	W_G = W_G_new
 	W_R = W_R_new
