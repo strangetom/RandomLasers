@@ -11,8 +11,8 @@ l = 40.e-6 #transport mean free path
 kappa_e = 3.e3 #extinction coefficient (see spec sheet in shared folder)
 tau_G = 14.e-9 #pump pulse FWHM
 tau_R = 14.e-9 #proble pulse FWHM 
-t_G = 0. #time of maxima of pump pulse 
-t_R = 0. #time of maxima of probe pulse 
+t_G = 5.e-8 #time of maxima of pump pulse 
+t_R = 5.e-8 #time of maxima of probe pulse 
 illum_area = np.pi*(2.e-3)**2 #illumation area
 I_G0 = 200.e-3/illum_area/1 #average pump intensity. !!USING E/tau_G is the peak power, not average. We need the frequency of the pulses.!!
 I_R0 = 200.e-3/illum_area/1 #average probe intensity
@@ -22,13 +22,13 @@ v = spc.c/n #transport velocity
 D = v*l/3. #diffusion coeffecient
 
 
-J = 4 #number of space steps
+J = 2 #number of space steps
 L = 8.e-4 #length of slap
 dx = L/J #space steps across slap
 z = np.arange(0,L,dx) # array of space steps
 
-N = 100 #number of time steps
-T = 1e-7 #length of time
+N = 10000 #number of time steps
+T = 1.e-7 #length of time
 dt = T/N #time steps
 
 #Define beta value
@@ -52,7 +52,7 @@ def q(N_1, W_G, W_R, W_A):
 
 
 def I_G(t):
-	return I_R0*np.sqrt(4*np.log(2)/np.pi)*np.exp(-kappa_e*z)*np.exp(-4*np.log(2)*(t-t_G-z/c)**2/(tau_G**2))
+	return I_G0*np.sqrt(4*np.log(2)/np.pi)*np.exp(-kappa_e*z)*np.exp(-4*np.log(2)*(t-t_G-z/c)**2/(tau_G**2))
 
 
 def I_R(t):
@@ -88,10 +88,20 @@ for timestep in range(N):
 	I_G_vals = I_G(timestep*dt)
 	I_R_vals = I_R(timestep*dt)
 
-	W_G_new = np.dot(A_G, (B_G.dot(W_G) + f(N_1,W_G,I_G_vals)) )
-	W_R_new = np.dot(A_R, (B_R.dot(W_R) + g(N_1,W_R,I_R_vals)) )
-	W_A_new = np.dot(A_A, (B_A.dot(W_A) + h(N_1,W_A)) )
+	W_G_new = A_G.dot((B_G.dot(W_G) + dt*f(N_1,W_G,I_G_vals)) )
+	W_R_new = A_R.dot((B_R.dot(W_R) + dt*g(N_1,W_R,I_R_vals)) )
+	W_A_new = A_A.dot((B_A.dot(W_A) + dt*h(N_1,W_A)) )
 	N_1_new = N_1 + dt*q(N_1, W_G, W_R, W_A)
+	
+	"""
+	RK4 for N_1 below
+	
+	k1 = q(N_1, W_G, W_R, W_A)
+	k2 = q(N_1 + dt*k1/2, W_G + dt*k1/2, W_R + dt*k1/2, W_A + dt*k1/2)
+	k3 = q(N_1 + dt*k2/2, W_G + dt*k2/2, W_R + dt*k2/2, W_A + dt*k2/2)
+	k4 = q(N_1 + dt*k3, W_G + dt*k3, W_R + dt*k3, W_A + dt*k3)
+	N_1_new = N_1 + dt*(k1 + 2*k2 + 2*k3 + k4)/6
+	"""
 
 	W_G = W_G_new
 	W_R = W_R_new
@@ -113,5 +123,7 @@ for timestep in range(N):
 		I_G_store = np.vstack((I_G_store, I_G_vals))
 		I_R_store = np.vstack((I_R_store, I_R_vals))
 
+	if timestep == 144:
+		break
 
 	print(timestep,end='\r')
