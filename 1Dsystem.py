@@ -1,6 +1,5 @@
 import numpy as np
 from scipy import constants as spc
-#from numba import jit, vectorize
 
 #define constants
 sig_abs = 3.0e-24 #absorption cross section
@@ -11,8 +10,8 @@ l = 40.e-6 #transport mean free path
 kappa_e = 3.e3 #extinction coefficient (see spec sheet in shared folder)
 tau_G = 14.e-9 #pump pulse FWHM
 tau_R = 14.e-9 #proble pulse FWHM 
-t_G = 5.e-8 #time of maxima of pump pulse 
-t_R = 5.e-8 #time of maxima of probe pulse 
+t_G = 5.e-9 #time of maxima of pump pulse 
+t_R = 5.e-9 #time of maxima of probe pulse 
 illum_area = np.pi*(2.e-3)**2 #illumation area
 I_G0 = 200.e-3/illum_area/1 #average pump intensity. !!USING E/tau_G is the peak power, not average. We need the frequency of the pulses.!!
 I_R0 = 200.e-3/illum_area/1 #average probe intensity
@@ -22,47 +21,36 @@ v = spc.c/n #transport velocity
 D = v*l/3. #diffusion coeffecient
 
 
-J = 2 #number of space steps
+J = 3 #number of space steps
 L = 8.e-4 #length of slap
 dx = L/J #space steps across slap
 z = np.arange(0,L,dx) # array of space steps
 
-N = 10000 #number of time steps
+N = 100000 #number of time steps
 T = 1.e-7 #length of time
 dt = T/N #time steps
 
 #Define beta value
-beta = D*dt/(2.*dx**2)
+beta = D*dt/(dx**2)
 
 
 def f(N_1, W_G, I_G_vals):
 	return -1*sig_abs*v*(N_t-N_1)*W_G + I_G_vals/l
 
-
 def g(N_1, W_R, I_R_vals):
 	return sig_em*v*N_1*W_R + I_R_vals/l
-
 
 def h(N_1, W_A):
 	return sig_em*v*N_1*W_A + N_1/tau_e
 
-
 def q(N_1, W_G, W_R, W_A):
 	return sig_abs*v*(N_t-N_1)*W_G - sig_em*v*N_1*(W_R+W_A) - N_1/tau_e
-
 
 def I_G(t):
 	return I_G0*np.sqrt(4*np.log(2)/np.pi)*np.exp(-kappa_e*z)*np.exp(-4*np.log(2)*(t-t_G-z/c)**2/(tau_G**2))
 
-
 def I_R(t):
 	return I_R0*np.sqrt(4*np.log(2)/np.pi)*np.exp(-kappa_e*z)*np.exp(-4*np.log(2)*(t-t_R-z/c)**2/(tau_R**2))
-
-def create_inv_A_matrix(beta):
-	"""Defines the matrix multipling the time derivative and inverts it"""
-	A =  np.diagflat([-beta for i in range(J-1)], -1) + np.diagflat([0]+[1.+2.*beta for i in range(J-2)]+[0]) + np.diagflat([-beta for i in range(J-1)], 1)
-	return np.linalg.inv(A)
-	#consider sparse matrices? using scipy.sparse.diags http://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.sparse.diags.html
 
 def create_B_matrix(beta):
 	"""Defines the matrix multipling the laplacian """
@@ -74,56 +62,50 @@ W_R = np.zeros(z.shape[0])
 W_A = np.zeros(z.shape[0])
 N_1 = np.zeros(z.shape[0])
 
-#Declare matrices for Crank-Nicolson method
-A_G = create_inv_A_matrix(beta)
-A_R = create_inv_A_matrix(beta)
-A_A = create_inv_A_matrix(beta)
-
 B_G = create_B_matrix(beta)
 B_R = create_B_matrix(beta)
 B_A = create_B_matrix(beta)
+
+#Storage lists
+W_G_store = []
+W_R_store = []
+W_A_store = []
+N_1_store = []
+I_G_store = []
+I_R_store = []
 
 #Run numerical calculation
 for timestep in range(N):
 	I_G_vals = I_G(timestep*dt)
 	I_R_vals = I_R(timestep*dt)
 
-	W_G_new = A_G.dot((B_G.dot(W_G) + dt*f(N_1,W_G,I_G_vals)) )
-	W_R_new = A_R.dot((B_R.dot(W_R) + dt*g(N_1,W_R,I_R_vals)) )
-	W_A_new = A_A.dot((B_A.dot(W_A) + dt*h(N_1,W_A)) )
+	W_G_new = B_G.dot(W_G) + dt*f(N_1,W_G,I_G_vals)
+	W_R_new = B_R.dot(W_R) + dt*g(N_1,W_R,I_R_vals)
+	W_A_new = B_A.dot(W_A) + dt*h(N_1,W_A)
 	N_1_new = N_1 + dt*q(N_1, W_G, W_R, W_A)
 	
-	"""
-	RK4 for N_1 below
-	
-	k1 = q(N_1, W_G, W_R, W_A)
-	k2 = q(N_1 + dt*k1/2, W_G + dt*k1/2, W_R + dt*k1/2, W_A + dt*k1/2)
-	k3 = q(N_1 + dt*k2/2, W_G + dt*k2/2, W_R + dt*k2/2, W_A + dt*k2/2)
-	k4 = q(N_1 + dt*k3, W_G + dt*k3, W_R + dt*k3, W_A + dt*k3)
-	N_1_new = N_1 + dt*(k1 + 2*k2 + 2*k3 + k4)/6
-	"""
 
 	W_G = W_G_new
 	W_R = W_R_new
 	W_A = W_A_new
 	N_1 = N_1_new
 
-	if timestep == 0:
-		W_G_store = W_G
-		W_R_store = W_R
-		W_A_store = W_A
-		N_1_store = N_1
-		I_G_store = I_G_vals
-		I_R_store = I_R_vals
+	if timestep*dt < 5e-8:
+		W_G_store.append(W_G)
+		W_R_store.append(W_R)
+		W_A_store.append(W_A)
+		N_1_store.append(N_1)
+		I_G_store.append(I_G_vals)
+		I_R_store.append(I_R_vals)
 	else:
-		W_G_store = np.vstack((W_G_store, W_G))
-		W_R_store = np.vstack((W_R_store, W_R))
-		W_A_store = np.vstack((W_A_store, W_A))
-		N_1_store = np.vstack((N_1_store, N_1))
-		I_G_store = np.vstack((I_G_store, I_G_vals))
-		I_R_store = np.vstack((I_R_store, I_R_vals))
-
-	if timestep == 144:
-		break
+		W_A_store.append(W_A)
+		N_1_store.append(N_1)
 
 	print(timestep,end='\r')
+
+W_G_store = np.array(W_G_store)
+W_R_store = np.array(W_R_store)
+W_A_store = np.array(W_A_store)
+N_1_store = np.array(N_1_store)
+I_G_store = np.array(I_G_store)
+I_R_store = np.array(I_R_store)
