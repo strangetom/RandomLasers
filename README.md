@@ -21,7 +21,7 @@ Figures 2 and 3 follow the same shape as similar figures in Lagendijk's paper, a
 The graph for the amplified spontaneous emmission is a bit funky, it may be that it decays over a much longer time.  
 * Using @jit in numba doesn't speed things up at all in it's current state. Other optimizations applied that massively increase speed (For 100,000 iterations, netbook down from 14 mins to 40 seconds).  
 * 10 microsecond calculation run. Only the data for W_A and N_1 were saved (graphs only, see Figure 4, since 10 million iterations is 1gb file size). Expected exponential decay observed. Woop!.  
-![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/03Feb/W_A.10million.svg "Figure 4")  
+![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/03Feb/W_A.10million.png "Figure 4")  
 
 # 2 February  
 * Need to indentify the dominant terms in the equations and find out why the calculation runs away.  
