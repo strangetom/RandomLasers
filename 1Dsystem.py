@@ -70,14 +70,14 @@ else:
 	B_R = create_B_matrix(beta)
 	B_A = create_B_matrix(beta)
 
-	#Storage lists
-	W_G_store = []
-	W_R_store = []
-	W_A_store = []
-	N_1_store = []
-	I_G_store = []
-	I_R_store = []
-	Outgoing_probe_flux = []
+	#Storage lists (containing intial values)
+	W_G_store = [W_G]
+	W_R_store = [W_R]
+	W_A_store = [W_A]
+	N_1_store = [N_1]
+	I_G_store = [np.zeros(z.shape[0])]
+	I_R_store = [np.zeros(z.shape[0])]
+	Outgoing_probe_flux = [W_R[1]-W_R[0]]
 
 	#Run numerical calculation
 	for timestep in range(N):
