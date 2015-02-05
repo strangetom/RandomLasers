@@ -6,14 +6,14 @@ sig_abs = 3.0e-24 #absorption cross section
 sig_em = 3.0e-23 #emission cross section
 tau_e = 3.2e-6 #lifetime of excited state
 N_t = 1.6e25 #total concentration of laser particles
-l = 40.e-6 #transport mean free path
+l = 100.e-6 #transport mean free path
 kappa_e = 3.e3 #extinction coefficient (see spec sheet in shared folder)
 tau_G = 14.e-9 #pump pulse FWHM
 tau_R = 14.e-9 #proble pulse FWHM 
 t_G = 5.e-9 #time of maxima of pump pulse 
-t_R = 5.e-9 #time of maxima of probe pulse 
+t_R = 15.e-9 #time of maxima of probe pulse 
 illum_area = np.pi*(2.e-3)**2 #illumation area
-I_G0 = 200.e-3/illum_area/1 #average pump intensity. !!USING E/tau_G is the peak power, not average. We need the frequency of the pulses.!!
+I_G0 = 1400.e-3/illum_area/1 #average pump intensity. !!USING E/tau_G is the peak power, not average. We need the frequency of the pulses.!!
 I_R0 = 200.e-3/illum_area/1 #average probe intensity
 n = 1.35 #average refractive index of medium
 c = spc.c/n #speed of light in medium
@@ -21,12 +21,12 @@ v = spc.c/n #transport velocity
 D = v*l/3. #diffusion coeffecient
 
 
-J = 4 #number of space steps
-L = 8.e-4 #length of slap
-dx = L/J #space steps across slap
-z = np.arange(0,L,dx) # array of space steps
+L = 1.e-3 #length of slap
+dx = l/2. #space steps across slap
+z = np.arange(0-l,L+l+dx,dx) # array of space steps
+J = z.shape[0]
 
-N = 100000 #number of time steps
+N = 1000000 #number of time steps
 T = 1.e-7 #length of time
 dt = T/N #time steps
 
@@ -38,7 +38,7 @@ def f(N_1, W_G, I_G_vals):
 	return -1*sig_abs*v*(N_t-N_1)*W_G + I_G_vals/l
 
 def g(N_1, W_R, I_R_vals):
-	return sig_em*v*N_1*W_R + I_R_vals/l
+	return sig_em*v*N_1*W_R# + I_R_vals/l
 
 def h(N_1, W_A):
 	return sig_em*v*N_1*W_A + N_1/tau_e
@@ -77,7 +77,7 @@ else:
 	N_1_store = [N_1]
 	I_G_store = [np.zeros(z.shape[0])]
 	I_R_store = [np.zeros(z.shape[0])]
-	Outgoing_probe_flux = [W_R[1]-W_R[0]]
+	Outgoing_flux = [W_A[2]-W_A[1]]
 
 	#Run numerical calculation
 	for timestep in range(N):
@@ -102,11 +102,11 @@ else:
 			N_1_store.append(N_1)
 			I_G_store.append(I_G_vals)
 			I_R_store.append(I_R_vals)
-			Outgoing_probe_flux.append(W_R[1]-W_R[0])
+			Outgoing_flux.append(W_A[2]-W_A[1])
 		else:
 			W_A_store.append(W_A)
 			N_1_store.append(N_1)
-			Outgoing_probe_flux.append(W_R[1]-W_R[0])
+			Outgoing_flux.append(W_A[2]-W_A[1])
 
 		print(timestep,end='\r')
 
@@ -116,4 +116,4 @@ else:
 	N_1_store = np.array(N_1_store)
 	I_G_store = np.array(I_G_store)
 	I_R_store = np.array(I_R_store)
-	Outgoing_probe_flux = np.array(Outgoing_probe_flux)
+	Outgoing_flux = np.array(Outgoing_flux)
