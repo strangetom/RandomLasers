@@ -1,5 +1,6 @@
 import numpy as np
 from scipy import constants as spc
+from scipy import sparse as sprs
 
 #define constants
 sig_abs = 3.0e-24 #absorption cross section
@@ -23,7 +24,7 @@ D = v*l/3. #diffusion coeffecient
 
 L = 1.e-3 #length of slap
 dx = l/2. #space steps across slap
-z = np.arange(0-l,L+l+dx,dx) # array of space steps
+z = np.arange(0,L+2*l+dx,dx) # array of space steps
 J = z.shape[0]
 
 N = 1000000 #number of time steps
@@ -35,21 +36,27 @@ beta = D*dt/(dx**2)
 
 
 def f(N_1, W_G, I_G_vals):
+	"""None partial derivate function for W_G"""
 	return -1*sig_abs*v*(N_t-N_1)*W_G + I_G_vals/l
 
 def g(N_1, W_R, I_R_vals):
+	"""None partial derivate function for W_R"""
 	return sig_em*v*N_1*W_R# + I_R_vals/l
 
 def h(N_1, W_A):
+	"""None partial derivate function for W_A"""
 	return sig_em*v*N_1*W_A + N_1/tau_e
 
 def q(N_1, W_G, W_R, W_A):
+	"""None partial derivate function for N_!"""
 	return sig_abs*v*(N_t-N_1)*W_G - sig_em*v*N_1*(W_R+W_A) - N_1/tau_e
 
 def I_G(t):
+	"""Calculate pump intensity vector at time t"""
 	return I_G0*np.sqrt(4*np.log(2)/np.pi)*np.exp(-kappa_e*z)*np.exp(-4*np.log(2)*(t-t_G-z/c)**2/(tau_G**2))
 
 def I_R(t):
+	"""Calculate probe intensity vector at time t"""
 	return I_R0*np.sqrt(4*np.log(2)/np.pi)*np.exp(-kappa_e*z)*np.exp(-4*np.log(2)*(t-t_R-z/c)**2/(tau_R**2))
 
 def create_B_matrix(beta):
@@ -57,7 +64,7 @@ def create_B_matrix(beta):
 	return np.diagflat([beta for i in range(J-1)], -1) + np.diagflat([0]+[1.-2.*beta for i in range(J-2)]+[0]) + np.diagflat([beta for i in range(J-1)], 1)
 
 if dt > dx**2/(2*D):
-	#If stability criterion not met, abort
+	#If stability criterion not met, abort.
 	print("Unstable conditions.")	
 else:
 	#Define intial conditions
@@ -66,17 +73,15 @@ else:
 	W_A = np.zeros(z.shape[0])
 	N_1 = np.zeros(z.shape[0])
 
-	B_G = create_B_matrix(beta)
-	B_R = create_B_matrix(beta)
-	B_A = create_B_matrix(beta)
+	B = create_B_matrix(beta)
 
 	#Storage lists (containing intial values)
 	W_G_store = [W_G]
 	W_R_store = [W_R]
 	W_A_store = [W_A]
 	N_1_store = [N_1]
-	I_G_store = [np.zeros(z.shape[0])]
-	I_R_store = [np.zeros(z.shape[0])]
+	I_G_store = []
+	I_R_store = []
 	Outgoing_flux = [W_A[2]-W_A[1]]
 
 	#Run numerical calculation
@@ -84,11 +89,10 @@ else:
 		I_G_vals = I_G(timestep*dt)
 		I_R_vals = I_R(timestep*dt)
 
-		W_G_new = B_G.dot(W_G) + dt*f(N_1,W_G,I_G_vals)
-		W_R_new = B_R.dot(W_R) + dt*g(N_1,W_R,I_R_vals)
-		W_A_new = B_A.dot(W_A) + dt*h(N_1,W_A)
+		W_G_new = B.dot(W_G) + dt*f(N_1,W_G,I_G_vals)
+		W_R_new = B.dot(W_R) + dt*g(N_1,W_R,I_R_vals)
+		W_A_new = B.dot(W_A) + dt*h(N_1,W_A)
 		N_1_new = N_1 + dt*q(N_1, W_G, W_R, W_A)
-		
 
 		W_G = W_G_new
 		W_R = W_R_new
