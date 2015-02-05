@@ -7,14 +7,14 @@ sig_abs = 3.0e-24 #absorption cross section
 sig_em = 3.0e-23 #emission cross section
 tau_e = 3.2e-6 #lifetime of excited state
 N_t = 1.6e25 #total concentration of laser particles
-l = 100.e-6 #transport mean free path
+l = 40.e-6 #transport mean free path
 kappa_e = 3.e3 #extinction coefficient (see spec sheet in shared folder)
 tau_G = 14.e-9 #pump pulse FWHM
 tau_R = 14.e-9 #proble pulse FWHM 
 t_G = 5.e-9 #time of maxima of pump pulse 
 t_R = 15.e-9 #time of maxima of probe pulse 
 illum_area = np.pi*(2.e-3)**2 #illumation area
-I_G0 = 1400.e-3/illum_area/1 #average pump intensity. !!USING E/tau_G is the peak power, not average. We need the frequency of the pulses.!!
+I_G0 = 200.e-3/illum_area/1 #average pump intensity. !!USING E/tau_G is the peak power, not average. We need the frequency of the pulses.!!
 I_R0 = 200.e-3/illum_area/1 #average probe intensity
 n = 1.35 #average refractive index of medium
 c = spc.c/n #speed of light in medium
@@ -22,13 +22,13 @@ v = spc.c/n #transport velocity
 D = v*l/3. #diffusion coeffecient
 
 
-L = 1.e-3 #length of slap
+L = 0.8e-3 #length of slap
 dx = l/2. #space steps across slap
 z = np.arange(0,L+2*l+dx,dx) # array of space steps
 J = z.shape[0]
 
 N = 1000000 #number of time steps
-T = 1.e-7 #length of time
+T = 5.e-8 #length of time
 dt = T/N #time steps
 
 #Define beta value
@@ -41,7 +41,7 @@ def f(N_1, W_G, I_G_vals):
 
 def g(N_1, W_R, I_R_vals):
 	"""None partial derivate function for W_R"""
-	return sig_em*v*N_1*W_R# + I_R_vals/l
+	return sig_em*v*N_1*W_R + I_R_vals/l
 
 def h(N_1, W_A):
 	"""None partial derivate function for W_A"""
@@ -65,7 +65,8 @@ def create_B_matrix(beta):
 
 if dt > dx**2/(2*D):
 	#If stability criterion not met, abort.
-	print("Unstable conditions.")	
+	print("Unstable conditions.")
+	print(str(dt)+" !< "+str(dx**2/(2*D)) )
 else:
 	#Define intial conditions
 	W_G = np.zeros(z.shape[0])
