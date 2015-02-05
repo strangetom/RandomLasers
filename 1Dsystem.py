@@ -116,4 +116,4 @@ else:
 	N_1_store = np.array(N_1_store)
 	I_G_store = np.array(I_G_store)
 	I_R_store = np.array(I_R_store)
-	Outgoing_probe_flux = np.array(Outgoing_flux)
+	Outgoing_probe_flux = np.array(Outgoing_probe_flux)
