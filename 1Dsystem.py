@@ -21,7 +21,7 @@ v = spc.c/n #transport velocity
 D = v*l/3. #diffusion coeffecient
 
 
-J = 3 #number of space steps
+J = 4 #number of space steps
 L = 8.e-4 #length of slap
 dx = L/J #space steps across slap
 z = np.arange(0,L,dx) # array of space steps
@@ -56,56 +56,64 @@ def create_B_matrix(beta):
 	"""Defines the matrix multipling the laplacian """
 	return np.diagflat([beta for i in range(J-1)], -1) + np.diagflat([0]+[1.-2.*beta for i in range(J-2)]+[0]) + np.diagflat([beta for i in range(J-1)], 1)
 
-#Define intial conditions
-W_G = np.zeros(z.shape[0])
-W_R = np.zeros(z.shape[0])
-W_A = np.zeros(z.shape[0])
-N_1 = np.zeros(z.shape[0])
+if dt > dx**2/(2*D):
+	#If stability criterion not met, abort
+	print("Unstable conditions.")	
+else:
+	#Define intial conditions
+	W_G = np.zeros(z.shape[0])
+	W_R = np.zeros(z.shape[0])
+	W_A = np.zeros(z.shape[0])
+	N_1 = np.zeros(z.shape[0])
 
-B_G = create_B_matrix(beta)
-B_R = create_B_matrix(beta)
-B_A = create_B_matrix(beta)
+	B_G = create_B_matrix(beta)
+	B_R = create_B_matrix(beta)
+	B_A = create_B_matrix(beta)
 
-#Storage lists
-W_G_store = []
-W_R_store = []
-W_A_store = []
-N_1_store = []
-I_G_store = []
-I_R_store = []
+	#Storage lists
+	W_G_store = []
+	W_R_store = []
+	W_A_store = []
+	N_1_store = []
+	I_G_store = []
+	I_R_store = []
+	Outgoing_probe_flux = []
 
-#Run numerical calculation
-for timestep in range(N):
-	I_G_vals = I_G(timestep*dt)
-	I_R_vals = I_R(timestep*dt)
+	#Run numerical calculation
+	for timestep in range(N):
+		I_G_vals = I_G(timestep*dt)
+		I_R_vals = I_R(timestep*dt)
 
-	W_G_new = B_G.dot(W_G) + dt*f(N_1,W_G,I_G_vals)
-	W_R_new = B_R.dot(W_R) + dt*g(N_1,W_R,I_R_vals)
-	W_A_new = B_A.dot(W_A) + dt*h(N_1,W_A)
-	N_1_new = N_1 + dt*q(N_1, W_G, W_R, W_A)
-	
+		W_G_new = B_G.dot(W_G) + dt*f(N_1,W_G,I_G_vals)
+		W_R_new = B_R.dot(W_R) + dt*g(N_1,W_R,I_R_vals)
+		W_A_new = B_A.dot(W_A) + dt*h(N_1,W_A)
+		N_1_new = N_1 + dt*q(N_1, W_G, W_R, W_A)
+		
 
-	W_G = W_G_new
-	W_R = W_R_new
-	W_A = W_A_new
-	N_1 = N_1_new
+		W_G = W_G_new
+		W_R = W_R_new
+		W_A = W_A_new
+		N_1 = N_1_new
 
-	if timestep*dt < 5e-8:
-		W_G_store.append(W_G)
-		W_R_store.append(W_R)
-		W_A_store.append(W_A)
-		N_1_store.append(N_1)
-		I_G_store.append(I_G_vals)
-		I_R_store.append(I_R_vals)
-	else:
-		W_A_store.append(W_A)
-		N_1_store.append(N_1)
+		if timestep*dt < 50e-9:
+			W_G_store.append(W_G)
+			W_R_store.append(W_R)
+			W_A_store.append(W_A)
+			N_1_store.append(N_1)
+			I_G_store.append(I_G_vals)
+			I_R_store.append(I_R_vals)
+			Outgoing_probe_flux.append(W_R[1]-W_R[0])
+		else:
+			W_A_store.append(W_A)
+			N_1_store.append(N_1)
+			Outgoing_probe_flux.append(W_R[1]-W_R[0])
 
-	print(timestep,end='\r')
+		print(timestep,end='\r')
 
-W_G_store = np.array(W_G_store)
-W_R_store = np.array(W_R_store)
-W_A_store = np.array(W_A_store)
-N_1_store = np.array(N_1_store)
-I_G_store = np.array(I_G_store)
-I_R_store = np.array(I_R_store)
+	W_G_store = np.array(W_G_store)
+	W_R_store = np.array(W_R_store)
+	W_A_store = np.array(W_A_store)
+	N_1_store = np.array(N_1_store)
+	I_G_store = np.array(I_G_store)
+	I_R_store = np.array(I_R_store)
+	Outgoing_probe_flux = np.array(Outgoing_flux)
