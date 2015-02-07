@@ -18,7 +18,7 @@ T = 5.e-8 #length of time
 dt = T/N #time steps
 time = ( dt*500*np.arange(0, store.shape[0], 1) ) *1e9 #time array in nanoseconds
 
-"""
+
 #If you fancy it multicoloured
 tableau20 = [(31, 119, 180), (174, 199, 232), (255, 127, 14), (255, 187, 120),  
              (44, 160, 44), (152, 223, 138), (214, 39, 40), (255, 152, 150),  
@@ -29,14 +29,14 @@ tableau20 = [(31, 119, 180), (174, 199, 232), (255, 127, 14), (255, 187, 120),
 for i in range(len(tableau20)):  
     r, g, b = tableau20[i]  
     tableau20[i] = (r / 255., g / 255., b / 255.) 
-"""
+
 
 for i in range(x.shape[0]):
 	position = ( i*dx*np.ones(store.shape[0]) ) *1e3 # position in microns
-	ax.plot(xs=time, ys=store[:,i] ,zs=position, zdir='y', color='r')
+	ax.plot(xs=time, ys=store[:,i] ,zs=position, zdir='y', color=tableau20[i%20])
 
 ax.set_xlabel('Time (ns)')
-ax.set_xlim(0., 30)
+ax.set_xlim(0, 30)
 ax.set_ylabel('Position (mm)')
 ax.set_ylim(0, 0.88)
 ax.set_zlabel('Energy density')
