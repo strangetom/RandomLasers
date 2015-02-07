@@ -5,9 +5,16 @@ Masters project modelling random lasers
 **[29 January](#29-january)**  
 **[1 February](#1-february)**  
 **[2 February](#2-february)**  
-**[3 February](#3-february)**
+**[3 February](#3-february)**  
+**[5 February](#5-february)**  
 
 ___________
+# 5 February  
+* Major correction to the numerical integration method. The space steps need to be smaller than the transport mean free path, which means the time steps get even smaller. The code has been modified to save less data than before since we don't need (1e6 x 45) data points per variable to plot graphs.  
+* The amplified spontaneous emmission response seems to be only decaying with a lifetime given by tau_e (as one would expect). We are expecting to see some peaks in the time evolution when we vary certain parameters, but we haven't observed this.  
+
+
+
 # 3 February  
 * Crank-Nicolson implementation seems to be unstable and barfs after around 140 steps (see Fig 1).    
 ![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/03Feb/03.02.15.instability.of.method.png "Figure 1")
