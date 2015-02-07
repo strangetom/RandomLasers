@@ -77,10 +77,10 @@ else:
 	B = create_B_matrix(beta)
 
 	#Storage lists (containing intial values)
-	W_G_store = [W_G]
-	W_R_store = [W_R]
-	W_A_store = [W_A]
-	N_1_store = [N_1]
+	W_G_store = []
+	W_R_store = []
+	W_A_store = []
+	N_1_store = []
 	I_G_store = []
 	I_R_store = []
 	Outgoing_flux = [W_A[2]-W_A[1]]
