@@ -12,20 +12,20 @@ kappa_e = 3.e3 #extinction coefficient (see spec sheet in shared folder)
 tau_G = 14.e-9 #pump pulse FWHM
 tau_R = 14.e-9 #proble pulse FWHM 
 t_G = 5.e-9 #time of maxima of pump pulse 
-t_R = 5.e-9 #time of maxima of probe pulse 
+t_R = 15.e-9 #time of maxima of probe pulse 
 illum_area = np.pi*(2.e-3)**2 #illumation area
-I_G0 = 200.e-3/illum_area/1 #average pump intensity. !!USING E/tau_G is the peak power, not average. We need the frequency of the pulses.!!
-I_R0 = 200.e-3/illum_area/1 #average probe intensity
+I_G0 = 200e-3/illum_area/1 #average pump intensity. !!USING E/tau_G is the peak power, not average. We need the frequency of the pulses.!!
+I_R0 = 200e-3/illum_area/1 #average probe intensity
 n = 1.35 #average refractive index of medium
 c = spc.c/n #speed of light in medium
 v = spc.c/n #transport velocity
 D = v*l/3. #diffusion coeffecient
 
 
-L = 0.8e-3 #length of slap
+L = 0.0008 #length of slap
 dx = l/2. #space steps across slap
-z = np.arange(0,L+2*l+dx,dx) # array of space steps
-J = z.shape[0]
+x = np.arange(0,L+2*l+dx,dx) # array of space steps
+J = x.shape[0]
 
 N = 1000000 #number of time steps
 T = 5.e-8 #length of time
@@ -53,11 +53,11 @@ def q(N_1, W_G, W_R, W_A):
 
 def I_G(t):
 	"""Calculate pump intensity vector at time t"""
-	return I_G0*np.sqrt(4*np.log(2)/np.pi)*np.exp(-kappa_e*z)*np.exp(-4*np.log(2)*(t-t_G-z/c)**2/(tau_G**2))
+	return I_G0*np.sqrt(4*np.log(2)/np.pi)*np.exp(-kappa_e*x)*np.exp(-4*np.log(2)*(t-t_G-x/c)**2/(tau_G**2))
 
 def I_R(t):
 	"""Calculate probe intensity vector at time t"""
-	return I_R0*np.sqrt(4*np.log(2)/np.pi)*np.exp(-kappa_e*z)*np.exp(-4*np.log(2)*(t-t_R-z/c)**2/(tau_R**2))
+	return I_R0*np.sqrt(4*np.log(2)/np.pi)*np.exp(-kappa_e*x)*np.exp(-4*np.log(2)*(t-t_R-x/c)**2/(tau_R**2))
 
 def create_B_matrix(beta):
 	"""Defines the matrix multipling the laplacian """
@@ -69,10 +69,10 @@ if dt > dx**2/(2*D):
 	print(str(dt)+" !< "+str(dx**2/(2*D)) )
 else:
 	#Define intial conditions
-	W_G = np.zeros(z.shape[0])
-	W_R = np.zeros(z.shape[0])
-	W_A = np.zeros(z.shape[0])
-	N_1 = np.zeros(z.shape[0])
+	W_G = np.zeros(x.shape[0])
+	W_R = np.zeros(x.shape[0])
+	W_A = np.zeros(x.shape[0])
+	N_1 = np.zeros(x.shape[0])
 
 	B = create_B_matrix(beta)
 
@@ -83,7 +83,7 @@ else:
 	N_1_store = []
 	I_G_store = []
 	I_R_store = []
-	Outgoing_flux = [W_A[2]-W_A[1]]
+	Outgoing_flux = [(W_A[2]-W_A[1])/dx]
 
 	#Run numerical calculation
 	for timestep in range(N):
@@ -100,7 +100,7 @@ else:
 		W_A = W_A_new
 		N_1 = N_1_new
 
-		if timestep % 500 == 0:	
+		if timestep % 1000 == 0:	
 			if timestep*dt < 30e-9:
 				W_G_store.append(W_G)
 				W_R_store.append(W_R)
@@ -108,13 +108,12 @@ else:
 				N_1_store.append(N_1)
 				I_G_store.append(I_G_vals)
 				I_R_store.append(I_R_vals)
-				Outgoing_flux.append(W_A[2]-W_A[1])
+				Outgoing_flux.append((W_A[2]-W_A[1])/dx)
 			else:
 				W_A_store.append(W_A)
 				N_1_store.append(N_1)
-				Outgoing_flux.append(W_A[2]-W_A[1])
+				Outgoing_flux.append((W_A[2]-W_A[1])/dx)
 		
-
 		print(timestep,end='\r')
 
 	W_G_store = np.array(W_G_store)
@@ -125,6 +124,7 @@ else:
 	I_R_store = np.array(I_R_store)
 	Outgoing_flux = np.array(Outgoing_flux)
 
+	"""
 	np.savetxt('./Data/W_G_store.txt',W_G_store, delimiter=',',newline='\n')
 	np.savetxt('./Data/W_R_store.txt',W_R_store, delimiter=',',newline='\n')
 	np.savetxt('./Data/W_A_store.txt',W_A_store, delimiter=',',newline='\n')
@@ -132,3 +132,4 @@ else:
 	np.savetxt('./Data/I_G_store.txt',I_G_store, delimiter=',',newline='\n')
 	np.savetxt('./Data/I_R_store.txt',I_R_store, delimiter=',',newline='\n')
 	np.savetxt('./Data/Outgoing_flux.txt',Outgoing_flux, delimiter=',',newline='\n')
+	"""
