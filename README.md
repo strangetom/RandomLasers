@@ -12,9 +12,9 @@ ___________
 # 5 February  
 * Major correction to the numerical integration method. The space steps need to be smaller than the transport mean free path, which means the time steps get even smaller. The code has been modified to save less data than before since we don't need (1e6 x 45) data points per variable to plot graphs.  
 * The amplified spontaneous emmission response seems to be only decaying with a lifetime given by tau_e (as one would expect). We are expecting to see some peaks in the time evolution when we vary certain parameters, but we haven't observed this.  
-* 3D graphs! As examples, figure 5 shows pump energy density, figure 6 shows pump intensity.   
+* 3D graphs! As examples, Fig 5 shows pump energy density, Fig 6 shows pump intensity.   
 ![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/05Feb/3D.Pump.Energy.png "Figure 5")  
-![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/05Feb/3D.Pump.Intensity.png "Figure 5")  
+![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/05Feb/3D.Pump.Intensity.png "Figure 6")  
 
 # 3 February  
 * Crank-Nicolson implementation seems to be unstable and barfs after around 140 steps (see Fig 1).    
