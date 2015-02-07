@@ -12,7 +12,7 @@ kappa_e = 3.e3 #extinction coefficient (see spec sheet in shared folder)
 tau_G = 14.e-9 #pump pulse FWHM
 tau_R = 14.e-9 #proble pulse FWHM 
 t_G = 5.e-9 #time of maxima of pump pulse 
-t_R = 15.e-9 #time of maxima of probe pulse 
+t_R = 5.e-9 #time of maxima of probe pulse 
 illum_area = np.pi*(2.e-3)**2 #illumation area
 I_G0 = 200.e-3/illum_area/1 #average pump intensity. !!USING E/tau_G is the peak power, not average. We need the frequency of the pulses.!!
 I_R0 = 200.e-3/illum_area/1 #average probe intensity
@@ -100,18 +100,20 @@ else:
 		W_A = W_A_new
 		N_1 = N_1_new
 
-		if timestep*dt < 50e-9:
-			W_G_store.append(W_G)
-			W_R_store.append(W_R)
-			W_A_store.append(W_A)
-			N_1_store.append(N_1)
-			I_G_store.append(I_G_vals)
-			I_R_store.append(I_R_vals)
-			Outgoing_flux.append(W_A[2]-W_A[1])
-		else:
-			W_A_store.append(W_A)
-			N_1_store.append(N_1)
-			Outgoing_flux.append(W_A[2]-W_A[1])
+		if timestep % 500 == 0:	
+			if timestep*dt < 30e-9:
+				W_G_store.append(W_G)
+				W_R_store.append(W_R)
+				W_A_store.append(W_A)
+				N_1_store.append(N_1)
+				I_G_store.append(I_G_vals)
+				I_R_store.append(I_R_vals)
+				Outgoing_flux.append(W_A[2]-W_A[1])
+			else:
+				W_A_store.append(W_A)
+				N_1_store.append(N_1)
+				Outgoing_flux.append(W_A[2]-W_A[1])
+		
 
 		print(timestep,end='\r')
 
@@ -122,3 +124,11 @@ else:
 	I_G_store = np.array(I_G_store)
 	I_R_store = np.array(I_R_store)
 	Outgoing_flux = np.array(Outgoing_flux)
+
+	np.savetxt('./Data/W_G_store.txt',W_G_store, delimiter=',',newline='\n')
+	np.savetxt('./Data/W_R_store.txt',W_R_store, delimiter=',',newline='\n')
+	np.savetxt('./Data/W_A_store.txt',W_A_store, delimiter=',',newline='\n')
+	np.savetxt('./Data/N_1_store.txt',N_1_store, delimiter=',',newline='\n')
+	np.savetxt('./Data/I_G_store.txt',I_G_store, delimiter=',',newline='\n')
+	np.savetxt('./Data/I_R_store.txt',I_R_store, delimiter=',',newline='\n')
+	np.savetxt('./Data/Outgoing_flux.txt',Outgoing_flux, delimiter=',',newline='\n')
