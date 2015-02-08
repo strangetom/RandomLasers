@@ -30,7 +30,7 @@ ___________
 In this Figure 2, the vertical blue line is where the maxima of the pump (and probe) pulse occur.  
 Figure 3 (below), shows how N_1 evolves.
 ![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/03Feb/03.02.15.N_1.png "Figure 3")  
-_(Note: all times are in nanoseconds)_  
+_(Note: all times are in seconds)_  
 Figures 2 and 3 follow the same shape as similar figures in Lagendijk's paper, as does the graph for the probe (not shown).    
 The graph for the amplified spontaneous emmission is a bit funky, it may be that it decays over a much longer time.  
 * Using @jit in numba doesn't speed things up at all in it's current state. Other optimizations applied that massively increase speed (For 100,000 iterations, netbook down from 14 mins to 40 seconds).  
