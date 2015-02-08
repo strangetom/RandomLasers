@@ -22,10 +22,10 @@ v = spc.c/n #transport velocity
 D = v*l/3. #diffusion coeffecient
 
 
-L = 0.0008 #length of slap
+L = 0.008 #length of slap
 dx = l/2. #space steps across slap
 x = np.arange(-l,L+l+dx,dx) #array of space steps
-x[0] = x[1] = 0#modify so intensity doesn't decay before medium
+x[0] = x[1] = 0 #modify so intensity doesn't decay before medium
 x[-2] = x[-1] = x[-3] #modify so intensity doesn't decay after medium
 J = x.shape[0]
 
@@ -62,8 +62,16 @@ def I_R(t):
 	return I_R0*np.sqrt(4*np.log(2)/np.pi)*np.exp(-kappa_e*x)*np.exp(-4*np.log(2)*(t-t_R-x/c)**2/(tau_R**2))
 
 def create_B_matrix(beta):
-	"""Defines the matrix multipling the laplacian """
-	return np.diagflat([beta for i in range(J-1)], -1) + np.diagflat([0]+[1.-2.*beta for i in range(J-2)]+[0]) + np.diagflat([beta for i in range(J-1)], 1)
+	"""
+	Defines the matrix multiplying the laplacian. 
+	Dense matrices are used when x.shape < 50
+	Sparse matrices are used when x.shape >= 50
+	"""
+	if x.shape[0] < 50:
+		return np.diagflat([beta for i in range(J-1)], -1) + np.diagflat([0]+[1.-2.*beta for i in range(J-2)]+[0]) + np.diagflat([beta for i in range(J-1)], 1)
+	else:
+		data = [[beta for i in range(J-1)], [0]+[1.-2.*beta for i in range(J-2)]+[0], [beta for i in range(J-1)]]
+		return sprs.diags(data, [-1, 0, 1], format="csr")
 
 if dt > dx**2/(2*D):
 	#If stability criterion not met, abort.
