@@ -67,7 +67,7 @@ def create_B_matrix(beta):
 	Dense matrices are used when x.shape < 50
 	Sparse matrices are used when x.shape >= 50
 	"""
-	if x.shape[0] < 50:
+	if x.shape[0] < 100:
 		return np.diagflat([beta for i in range(J-1)], -1) + np.diagflat([0]+[1.-2.*beta for i in range(J-2)]+[0]) + np.diagflat([beta for i in range(J-1)], 1)
 	else:
 		data = [[beta for i in range(J-1)], [0]+[1.-2.*beta for i in range(J-2)]+[0], [beta for i in range(J-1)]]
