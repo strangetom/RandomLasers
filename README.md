@@ -38,7 +38,7 @@ The graph for the amplified spontaneous emmission is a bit funky, it may be that
 ![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/03Feb/W_A.10million.png "Figure 4")  
 
 # 2 February  
-* Need to indentify the dominant terms in the equations and find out why the calculation runs away.  
+* Need to identify the dominant terms in the equations and find out why the calculation runs away.  
 * Numbapro academic license obtained from continuum.io so optimisation using @jit decorator can be implemented at some point.  
 
 
