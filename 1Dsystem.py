@@ -24,7 +24,9 @@ D = v*l/3. #diffusion coeffecient
 
 L = 0.0008 #length of slap
 dx = l/2. #space steps across slap
-x = np.arange(0,L+2*l+dx,dx) # array of space steps
+x = np.arange(-l,L+l+dx,dx) #array of space steps
+x[0] = x[1] = 0#modify so intensity doesn't decay before medium
+x[-2] = x[-1] = x[-3] #modify so intensity doesn't decay after medium
 J = x.shape[0]
 
 N = 1000000 #number of time steps
@@ -100,7 +102,7 @@ else:
 		W_A = W_A_new
 		N_1 = N_1_new
 
-		if timestep % 1000 == 0:	
+		if timestep % 500 == 0:	
 			if timestep*dt < 30e-9:
 				W_G_store.append(W_G)
 				W_R_store.append(W_R)
@@ -113,7 +115,7 @@ else:
 				W_A_store.append(W_A)
 				N_1_store.append(N_1)
 				Outgoing_flux.append((W_A[2]-W_A[1])/dx)
-		
+
 		print(timestep,end='\r')
 
 	W_G_store = np.array(W_G_store)
@@ -124,12 +126,12 @@ else:
 	I_R_store = np.array(I_R_store)
 	Outgoing_flux = np.array(Outgoing_flux)
 
-	"""
-	np.savetxt('./Data/W_G_store.txt',W_G_store, delimiter=',',newline='\n')
-	np.savetxt('./Data/W_R_store.txt',W_R_store, delimiter=',',newline='\n')
-	np.savetxt('./Data/W_A_store.txt',W_A_store, delimiter=',',newline='\n')
-	np.savetxt('./Data/N_1_store.txt',N_1_store, delimiter=',',newline='\n')
-	np.savetxt('./Data/I_G_store.txt',I_G_store, delimiter=',',newline='\n')
-	np.savetxt('./Data/I_R_store.txt',I_R_store, delimiter=',',newline='\n')
-	np.savetxt('./Data/Outgoing_flux.txt',Outgoing_flux, delimiter=',',newline='\n')
-	"""
+"""
+np.savetxt('./Data/W_G_store.txt',W_G_store, delimiter=',',newline='\n')
+np.savetxt('./Data/W_R_store.txt',W_R_store, delimiter=',',newline='\n')
+np.savetxt('./Data/W_A_store.txt',W_A_store, delimiter=',',newline='\n')
+np.savetxt('./Data/N_1_store.txt',N_1_store, delimiter=',',newline='\n')
+np.savetxt('./Data/I_G_store.txt',I_G_store, delimiter=',',newline='\n')
+np.savetxt('./Data/I_R_store.txt',I_R_store, delimiter=',',newline='\n')
+np.savetxt('./Data/Outgoing_flux.txt',Outgoing_flux, delimiter=',',newline='\n')
+"""
