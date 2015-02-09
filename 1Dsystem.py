@@ -22,7 +22,7 @@ v = spc.c/n #transport velocity
 D = v*l/3. #diffusion coeffecient
 
 
-L = 0.008 #length of slap
+L = 0.0008 #length of slap
 dx = l/2. #space steps across slap
 x = np.arange(-l,L+l+dx,dx) #array of space steps
 x[0] = x[1] = 0 #modify so intensity doesn't decay before medium
@@ -118,11 +118,11 @@ else:
 				N_1_store.append(N_1)
 				I_G_store.append(I_G_vals)
 				I_R_store.append(I_R_vals)
-				Outgoing_flux.append( (- D*(W_A[3]-W_A[1])/(2*dx) )
+				Outgoing_flux.append( (- D*(W_A[3]-W_A[1])/(2*dx) ))
 			else:
 				W_A_store.append(W_A)
 				N_1_store.append(N_1)
-				Outgoing_flux.append( (- D*(W_A[3]-W_A[1])/(2*dx) )
+				Outgoing_flux.append( (- D*(W_A[3]-W_A[1])/(2*dx) ))
 
 		print(timestep,end='\r')
 
