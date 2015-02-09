@@ -93,7 +93,7 @@ else:
 	N_1_store = []
 	I_G_store = []
 	I_R_store = []
-	Outgoing_flux = [(W_A[2]-W_A[1])/dx]
+	Outgoing_flux = [ - D*(W_A[3]-W_A[1])/(2*dx) ]
 
 	#Run numerical calculation
 	for timestep in range(N):
@@ -118,11 +118,11 @@ else:
 				N_1_store.append(N_1)
 				I_G_store.append(I_G_vals)
 				I_R_store.append(I_R_vals)
-				Outgoing_flux.append((W_A[2]-W_A[1])/dx)
+				Outgoing_flux.append( (- D*(W_A[3]-W_A[1])/(2*dx) )
 			else:
 				W_A_store.append(W_A)
 				N_1_store.append(N_1)
-				Outgoing_flux.append((W_A[2]-W_A[1])/dx)
+				Outgoing_flux.append( (- D*(W_A[3]-W_A[1])/(2*dx) )
 
 		print(timestep,end='\r')
 
