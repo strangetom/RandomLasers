@@ -12,8 +12,8 @@ Masters project modelling random lasers
 
 ___________
 # 10 February  
-* The values of I_G0 and I_R0 in the intensity functions should be in terms of photon count, rather than energy units. This also means that the energy densities are actually photon densities (so the 4 coupled equations now have consistant units).  
-* It look like Lagendijk uses kappa_e of about 1e4, judging by the results of the gain coefficient as a function of depth into the material. Fig 8 shows how the gain coefficient varies as a function of depth. This is after the pump pulse has ended (set as 1 pulsewidth after the peak of the pulse).  
+* The values of I<sub>G0</sub> and I<sub>R0</sub> in the intensity functions should be in terms of photon count, rather than energy units. This also means that the energy densities are actually photon densities (so the 4 coupled equations now have consistant units).  
+* It look like Lagendijk uses K<sub>e</sub> of 1x10<sup>4</sup>, judging by the results of the gain coefficient as a function of depth into the material. Fig 8 shows how the gain coefficient varies as a function of depth. This is after the pump pulse has ended (set as 1 pulsewidth after the peak of the pulse).  
 ![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/10Feb/Gain%20comparison.png "Figure 8")  
 * Fig 8 matches has the correct shape. 
   * for the single sided pump, the gain coefficient decays rapidly into the medium.  
