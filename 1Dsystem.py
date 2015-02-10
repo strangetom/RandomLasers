@@ -30,7 +30,7 @@ x[-2] = x[-1] = x[-3] #modify so intensity doesn't decay after medium
 J = x.shape[0]
 
 N = 1000000 #number of time steps
-T = 3.e-8 #length of time
+T = 5.e-8 #length of time
 dt = T/N #time steps
 
 #Define beta value
@@ -115,7 +115,7 @@ else:
 		W_A = W_A_new
 		N_1 = N_1_new
 
-		if timestep % 500 == 0:	
+		if timestep % 100 == 0:	
 			if timestep*dt < 30e-9:
 				W_G_store.append(W_G)
 				W_R_store.append(W_R)
