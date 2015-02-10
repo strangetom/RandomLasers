@@ -7,14 +7,14 @@ sig_abs = 3.0e-24 #absorption cross section
 sig_em = 3.0e-23 #emission cross section
 tau_e = 3.2e-6 #lifetime of excited state
 N_t = 1.6e25 #total concentration of laser particles
-l = 40.e-6 #transport mean free path
+l = 100.e-6 #transport mean free path
 kappa_e = 1.e4 #extinction coefficient (see spec sheet in shared folder)
 tau_G = 14.e-9 #pump pulse FWHM
 tau_R = 14.e-9 #proble pulse FWHM 
 t_G = 15.e-9 #time of maxima of pump pulse 
 t_R = 15.e-9 #time of maxima of probe pulse 
 illum_area = np.pi*(2.e-3)**2 #illumation area
-I_G0 = 200e-3*532e-9/(6.63e-34*3e8)/14e-9 #average pump intensity. !!USING E/tau_G is the peak power, not average. We need the frequency of the pulses.!!
+I_G0 = 4*175e-3*532e-9/(6.63e-34*3e8)/14e-9 #average pump intensity. !!USING E/tau_G is the peak power, not average. We need the frequency of the pulses.!!
 I_R0 = 0#200e-3*532e-9/(6.63e-34*3e8)/14e-9 #average probe intensity
 n = 1.35 #average refractive index of medium
 c = spc.c/n #speed of light in medium
@@ -22,14 +22,14 @@ v = spc.c/n #transport velocity
 D = v*l/3. #diffusion coeffecient
 
 
-L = 0.0008 #length of slap
+L = 0.001 #length of slap
 dx = l/2. #space steps across slap
 x = np.arange(-l,L+l+dx,dx) #array of space steps
 x[0] = x[1] = 0 #modify so intensity doesn't decay before medium
 x[-2] = x[-1] = x[-3] #modify so intensity doesn't decay after medium
 J = x.shape[0]
 
-N = 1000000 #number of time steps
+N = 5000000 #number of time steps
 T = 5.e-8 #length of time
 dt = T/N #time steps
 
@@ -98,11 +98,11 @@ else:
 	N_1_store = []
 	I_G_store = []
 	I_R_store = []
-	Outgoing_flux = [ D*(W_A[3]-W_A[1])/(2*dx) ]
+	Outgoing_flux = [ D*(W_A[2]-W_A[1])/dx ]
 
 	#Run numerical calculation
 	for timestep in range(N):
-		I_G_vals = I_G_double(timestep*dt)
+		I_G_vals = I_G(timestep*dt)
 		I_R_vals = I_R(timestep*dt)
 
 		W_G_new = B.dot(W_G) + dt*f(N_1,W_G,I_G_vals)
@@ -123,11 +123,11 @@ else:
 				N_1_store.append(N_1)
 				I_G_store.append(I_G_vals)
 				I_R_store.append(I_R_vals)
-				Outgoing_flux.append( (D*(W_A[3]-W_A[1])/(2*dx) ))
+				Outgoing_flux.append( (D*(W_A[2]-W_A[1])/dx ))
 			else:
 				W_A_store.append(W_A)
 				N_1_store.append(N_1)
-				Outgoing_flux.append( (D*(W_A[3]-W_A[1])/(2*dx) ))
+				Outgoing_flux.append( (D*(W_A[2]-W_A[1])/dx ))
 
 		print(timestep, end='\r')
 
