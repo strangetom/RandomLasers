@@ -14,7 +14,7 @@ tau_R = 14.e-9 #proble pulse FWHM
 t_G = 15.e-9 #time of maxima of pump pulse 
 t_R = 15.e-9 #time of maxima of probe pulse 
 illum_area = np.pi*(2.e-3)**2 #illumation area
-I_G0 = 4*175e-3*532e-9/(6.63e-34*3e8)/14e-9 #average pump intensity. !!USING E/tau_G is the peak power, not average. We need the frequency of the pulses.!!
+I_G0 = 175e-3*532e-9/(6.63e-34*3e8)/14e-9 #average pump intensity
 I_R0 = 0#200e-3*532e-9/(6.63e-34*3e8)/14e-9 #average probe intensity
 n = 1.35 #average refractive index of medium
 c = spc.c/n #speed of light in medium
@@ -29,7 +29,7 @@ x[0] = x[1] = 0 #modify so intensity doesn't decay before medium
 x[-2] = x[-1] = x[-3] #modify so intensity doesn't decay after medium
 J = x.shape[0]
 
-N = 5000000 #number of time steps
+N = 1000000 #number of time steps
 T = 5.e-8 #length of time
 dt = T/N #time steps
 
@@ -128,8 +128,8 @@ else:
 				W_A_store.append(W_A)
 				N_1_store.append(N_1)
 				Outgoing_flux.append( (D*(W_A[2]-W_A[1])/dx ))
-
 		print(timestep, end='\r')
+		
 
 	W_G_store = np.array(W_G_store)
 	W_R_store = np.array(W_R_store)
