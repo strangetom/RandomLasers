@@ -8,9 +8,19 @@ Masters project modelling random lasers
 **[3 February](#3-february)**  
 **[5 February](#5-february)**  
 **[8 February](#8-february)**  
+**[10 February](#10-february)**  
 
 ___________
-# 8 February  
+# 10 February  
+* The values of I_G0 and I_R0 in the intensity functions should be in terms of photon count, rather than energy units. This also means that the energy densities are actually photon densities (so the 4 coupled equations now have consistant units).  
+* It look like Lagendijk uses kappa_e of about 1e4, judging by the results of the gain coefficient as a function of depth into the material. Fig 8 shows how the gain coefficient varies as a function of depth. This is after the pump pulse has ended (set as 1 pulsewidth after the peak of the pulse).  
+![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/10Feb/Gain%20comparison.png "Figure 8")  
+* Fig 8 matches has the correct shape. 
+  * for the single sided pump, the gain coefficient decays rapidly into the medium.  
+  * for the double sided pump, the gain coefficent is roughly uniform. It does dip in the centre (slightly).  
+
+  
+# 8 February    
 * Sparse matrices make a significant difference when the B matrix is large, so the create_B_matrix function has been modified to use sparse matrices (csr) if the are more the 100 position elements. When the matrix is small, they actually slow things down. See Figure 7.  
 ![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/08Feb/Sparse.Matrix.Benchmark.png "Figure 7")  
 * Figure 6 can also be found on plotly [here](https://plot.ly/~strangetom/32/trace-1/). This allows for some interactivity, but it is a major pain in the arse to set up.  
