@@ -57,6 +57,11 @@ def I_G(t):
 	"""Calculate pump intensity vector at time t"""
 	return I_G0*np.sqrt(4*np.log(2)/np.pi)*np.exp(-kappa_e*x)*np.exp(-4*np.log(2)*(t-t_G-x/c)**2/(tau_G**2))
 
+def I_G_double(t):
+	"""Calculate pump intensity vector at time t"""
+	return I_G0*np.sqrt(4*np.log(2)/np.pi)* (np.exp(-kappa_e*x)+np.exp(-kappa_e*(L-x)) )/2 *np.exp(-4*np.log(2)*(t-t_G-x/c)**2/(tau_G**2))
+
+
 def I_R(t):
 	"""Calculate probe intensity vector at time t"""
 	return I_R0*np.sqrt(4*np.log(2)/np.pi)*np.exp(-kappa_e*x)*np.exp(-4*np.log(2)*(t-t_R-x/c)**2/(tau_R**2))
@@ -97,7 +102,7 @@ else:
 
 	#Run numerical calculation
 	for timestep in range(N):
-		I_G_vals = I_G(timestep*dt)
+		I_G_vals = I_G_double(timestep*dt)
 		I_R_vals = I_R(timestep*dt)
 
 		W_G_new = B.dot(W_G) + dt*f(N_1,W_G,I_G_vals)
