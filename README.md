@@ -18,6 +18,9 @@ ___________
 * Fig 8 matches has the correct shape. 
   * for the single sided pump, the gain coefficient decays rapidly into the medium.  
   * for the double sided pump, the gain coefficent is roughly uniform. It does dip in the centre (slightly).  
+* The 3D plots [below](#5-february) have been recreated with the corrected intensities. This changes the shape of them quite a bit. Shown below are Fig 9 (single sided pump intensity) and Fig 10 (double sided pump intensity).  
+![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/10Feb/3D.Pump.Intensity.Single.png "Figure 9")
+![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/10Feb/3D.Pump.Intensity.Double.png "Figure 10")
 
   
 # 8 February    
