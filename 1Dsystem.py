@@ -50,7 +50,7 @@ def h(N_1, W_A):
 	return sig_em*v*N_1*W_A + N_1/tau_e
 
 def q(N_1, W_G, W_R, W_A):
-	"""None partial derivate function for N_!"""
+	"""None partial derivate function for N_1"""
 	return sig_abs*v*(N_t-N_1)*W_G - sig_em*v*N_1*(W_R+W_A) - N_1/tau_e
 
 def I_G(t):
@@ -91,7 +91,7 @@ else:
 
 	B = create_B_matrix(beta)
 
-	#Storage lists (containing intial values)
+	#Storage lists
 	W_G_store = []
 	W_R_store = []
 	W_A_store = []
