@@ -9,8 +9,15 @@ Masters project modelling random lasers
 **[5 February](#5-february)**  
 **[8 February](#8-february)**  
 **[10 February](#10-february)**  
+**[14 February](#13-february)**  
 
 ___________
+# 14 February  
+* Yay for working on valentines day!  
+* Code does not do what it's meant to.  Attempted to implement Crank-Nicolson again but it's just as crap as before. Cannot get the system to lase.
+* We have an example fortran code written using CN method and in 3 dimensions. It mostly makes sense, however there are a lot extra multiplying factors I don't yet understand the purpose of.  
+* Giving up with life.  
+
 # 10 February  
 * The values of I<sub>G0</sub> and I<sub>R0</sub> in the intensity functions should be in terms of photon count, rather than energy units. This also means that the energy densities are actually photon densities (so the 4 coupled equations now have consistant units).  
 * It look like Lagendijk uses K<sub>e</sub> of 1x10<sup>4</sup>, judging by the results of the gain coefficient as a function of depth into the material. Fig 8 shows how the gain coefficient varies as a function of depth. This is after the pump pulse has ended (set as 1 pulsewidth after the peak of the pulse).  
