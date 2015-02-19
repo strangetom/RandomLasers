@@ -9,9 +9,18 @@ Masters project modelling random lasers
 **[5 February](#5-february)**  
 **[8 February](#8-february)**  
 **[10 February](#10-february)**  
-**[14 February](#13-february)**  
+**[14 February](#14-february)**   
+**[19 February](#19-february)** 
 
 ___________
+# 19 February
+* The PDEs were made dimensionless by introducing introducing dimensionless variables. Variables were made dimensionless by dividing by the largest value with the dimension.  
+* These were discretized and implemented in code using the forward Euler method. Crank-Nicolson has not been attmepted yet (it will be).  
+* The extinction coefficent has been changed from 2x10<sup>4</sup> to 2x10<sup>-4</sup>, which gives more reasonable results (this needs confirming/referencing).  
+* Figure 11 shows the flux obtained with 100 um mean free path and 1 mm thickness. The only every 500th data point was saved.   
+![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/19Feb/Flux.png "Figure 11")  
+
+
 # 14 February  
 * Yay for working on valentines day!  
 * Code does not do what it's meant to.  Attempted to implement Crank-Nicolson again but it's just as crap as before. Cannot get the system to lase.
