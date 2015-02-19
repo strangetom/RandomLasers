@@ -19,6 +19,8 @@ ___________
 * The extinction coefficent has been changed from 2x10<sup>4</sup> to 2x10<sup>-4</sup>, which gives more reasonable results (this needs confirming/referencing).  
 * Figure 11 shows the flux obtained with 100 um mean free path and 1 mm thickness. The only every 500th data point was saved.   
 ![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/19Feb/Flux.png "Figure 11")  
+* Now in 3D!  
+![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/19Feb/W_A.3D.png "Figure 12")
 
 
 # 14 February  
