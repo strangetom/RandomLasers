@@ -1,150 +1,111 @@
 import numpy as np
 from scipy import constants as spc
-from scipy import sparse as sprs
 
 #define constants
-sig_abs = 3.0e-24 #absorption cross section
-sig_em = 3.0e-23 #emission cross section
-tau_e = 3.2e-6 #lifetime of excited state
-N_t = 1.6e25 #total concentration of laser particles
-l = 100.e-6 #transport mean free path
-kappa_e = 1.e4 #extinction coefficient (see spec sheet in shared folder)
-tau_G = 14.e-9 #pump pulse FWHM
-tau_R = 14.e-9 #proble pulse FWHM 
-t_G = 15.e-9 #time of maxima of pump pulse 
-t_R = 15.e-9 #time of maxima of probe pulse 
-illum_area = np.pi*(2.e-3)**2 #illumation area
-I_G0 = 175e-3*532e-9/(6.63e-34*3e8)/14e-9 #average pump intensity
-I_R0 = 0#200e-3*532e-9/(6.63e-34*3e8)/14e-9 #average probe intensity
-n = 1.35 #average refractive index of medium
-c = spc.c/n #speed of light in medium
-v = spc.c/n #transport velocity
-D = v*l/3. #diffusion coeffecient
+sig_abs = 3.0e-24 # bsorption cross section
+sig_em = 3.0e-23 # emission cross section
+tau_e = 3.2e-6 # lifetime of excited state
+N_t = 1.6e25 # total concentration of laser particles
+l = 100.e-6 # transport mean free path
+kappa_e = 2.e-4 # extinction coefficient (see spec sheet in shared folder)
+tau_G = 14.e-9 # pump pulse FWHM
+t_G = 15.e-9 # time of maxima of pump pulse 
+illum_area = np.pi*(2.e-3)**2 # illumation area
+n = 1.35 # average refractive index of medium
+c = spc.c/n # speed of light in medium
+v = spc.c/n # transport velocity
+D = v*l/3. # diffusion coeffecient
 
+E_G = 6.63e-34*c/532e-9 # energy of pump photons
+E_A = 6.63e-34*c/700e-9 # energy of emitted photons
+I_G0 = 175e-3/14.e-9/illum_area # average pump intensity
 
-L = 0.001 #length of slap
-dx = l/2. #space steps across slap
-x = np.arange(-l,L+l+dx,dx) #array of space steps
-x[0] = x[1] = 0 #modify so intensity doesn't decay before medium
-x[-2] = x[-1] = x[-3] #modify so intensity doesn't decay after medium
-J = x.shape[0]
+#define space parameters
+L = 0.001 # length of medium
+dz = l/2 # space increment
+z = np.arange(-l, L+l+dz, dz) # vector in space
+z[0] = z[1] = z[2] # modifiy space vector so pulses don't decay before entering medium
+z[-1] = z[-2] = z[-3] # modifiy space vector so pulses don't decay after exiting medium
+J = z.shape[0] # number of space steps
 
-N = 1000000 #number of time steps
-T = 5.e-8 #length of time
-dt = T/N #time steps
+#define time parameters
+N = 1000000 # number of time steps
+T = 50.e-9 # length of time
+dt = T/N # time increment
 
-#Define beta value
-beta = D*dt/(dx**2)
+# initial conditions
+W_G = np.zeros(z.shape[0])
+W_A = np.zeros(z.shape[0])
+N_pop = np.zeros(z.shape[0])
 
+# lists for storage
+W_G_storage = []
+W_A_storage = []
+N_pop_storage = [] # Note this is N_1/N_t
+I_G_storage = []
 
-def f(N_1, W_G, I_G_vals):
-	"""None partial derivate function for W_G"""
-	return -1*sig_abs*v*(N_t-N_1)*W_G + I_G_vals/l
+# function definitions
+def ASE_RHS(W_A, N_pop):
+	"""Calculates the right hand side of the PDE for amplified spontaneous emission"""
+	M = np.diagflat([0]+[ (dt*D/dz**2) for i in range(J-2)], -1) + np.diagflat([0]+[0]+[ (1. - 2*dt*D/dz**2 + dt*sig_em*v*N_pop[i]*N_t) for i in range(J-4)]+[0]+[0]) + np.diagflat([ (dt*D/dz**2) for i in range(J-2)]+[0], 1)
+	return M.dot(W_A) + dt*c*N_t*E_A/tau_e/I_G0 * N_pop
 
-def g(N_1, W_R, I_R_vals):
-	"""None partial derivate function for W_R"""
-	return sig_em*v*N_1*W_R + I_R_vals/l
+def PUMP_RHS(W_G, N_pop, I_G):
+	"""Calculates the right hand side of the PDE for the pump"""
+	M = np.diagflat([0]+[ (dt*D/dz**2) for i in range(J-2)], -1) + np.diagflat([0]+[0]+ [(1. - 2*dt*D/dz**2 - dt*sig_abs*v*N_t*(1-N_pop[i]) ) for i in range(J-4) ]+[0]+[0]) + np.diagflat([ (dt*D/dz**2) for i in range(J-2)]+[0], 1)
+	return M.dot(W_G) + dt/tau_e *I_G
 
-def h(N_1, W_A):
-	"""None partial derivate function for W_A"""
-	return sig_em*v*N_1*W_A + N_1/tau_e
-
-def q(N_1, W_G, W_R, W_A):
-	"""None partial derivate function for N_1"""
-	return sig_abs*v*(N_t-N_1)*W_G - sig_em*v*N_1*(W_R+W_A) - N_1/tau_e
+def POP_RHS(N_pop, W_G, W_A):
+	"""Calculates the right hand side of the PDE for the excited population"""
+	term_1 = dt*sig_abs*v*(1-N_pop)*I_G0/(c*E_G) * W_G
+	term_2 = dt*sig_em*v*N_pop*I_G0/(c*E_A) * W_A
+	term_3 = dt/tau_e * N_pop
+	return N_pop + (term_1 - term_2 - term_3)
 
 def I_G(t):
-	"""Calculate pump intensity vector at time t"""
-	return I_G0*np.sqrt(4*np.log(2)/np.pi)*np.exp(-kappa_e*x)*np.exp(-4*np.log(2)*(t-t_G-x/c)**2/(tau_G**2))
+	"""Calculates the intensity through space at a given time"""
+	I_vec = c*tau_e/l * np.sqrt(4*np.log(2)/np.pi)*np.exp(-kappa_e*z)*np.exp( -4*np.log(2)*(t-t_G-z/c)**2/tau_G**2)
+	I_vec[0]=I_vec[1]=I_vec[-1]=I_vec[-2] = 0
+	return I_vec
 
-def I_G_double(t):
-	"""Calculate pump intensity vector at time t"""
-	return I_G0*np.sqrt(4*np.log(2)/np.pi)* (np.exp(-kappa_e*x)+np.exp(-kappa_e*(L-x)) )/2 *np.exp(-4*np.log(2)*(t-t_G-x/c)**2/(tau_G**2))
+if dt > dz**2/(2*D):
+	print("Unstable conditions")
+
+for timestep in range(N):
+
+	# get intensity spatial profile at current time
+	I_G_current_time = I_G(timestep*dt)
+
+	# calculate next time steps for variables
+	N_pop_next = POP_RHS(N_pop, W_G, W_A)
+	W_G_next = PUMP_RHS(W_G, N_pop, I_G_current_time)
+	W_A_next = ASE_RHS(W_A, N_pop)
+
+	# set newly calculated values to current time for next loop
+	N_pop = N_pop_next
+	W_G = W_G_next
+	W_A = W_A_next
+
+	if timestep % 500 == 0:
+		# store data in storage list
+		I_G_storage.append(I_G_current_time)
+		N_pop_storage.append(N_pop)
+		W_G_storage.append(W_G)
+		W_A_storage.append(W_A)
+
+	print(timestep, end='\r')
 
 
-def I_R(t):
-	"""Calculate probe intensity vector at time t"""
-	return I_R0*np.sqrt(4*np.log(2)/np.pi)*np.exp(-kappa_e*x)*np.exp(-4*np.log(2)*(t-t_R-x/c)**2/(tau_R**2))
-
-def create_B_matrix(beta):
-	"""
-	Defines the matrix multiplying the space derivative. 
-	Dense matrices are used when x.shape < 50
-	Sparse matrices are used when x.shape >= 50
-	"""
-	if x.shape[0] < 100:
-		return np.diagflat([beta for i in range(J-1)], -1) + np.diagflat([0]+[1.-2.*beta for i in range(J-2)]+[0]) + np.diagflat([beta for i in range(J-1)], 1)
-	else:
-		data = [[beta for i in range(J-1)], [0]+[1.-2.*beta for i in range(J-2)]+[0], [beta for i in range(J-1)]]
-		return sprs.diags(data, [-1, 0, 1], format="csr")
-
-if dt > dx**2/(2*D):
-	#If stability criterion not met, abort.
-	print("Unstable conditions.")
-	print(str(dt)+" !< "+str(dx**2/(2*D)) )
-else:
-	#Define intial conditions
-	W_G = np.zeros(x.shape[0])
-	W_R = np.zeros(x.shape[0])
-	W_A = np.zeros(x.shape[0])
-	N_1 = np.zeros(x.shape[0])
-
-	B = create_B_matrix(beta)
-
-	#Storage lists
-	W_G_store = []
-	W_R_store = []
-	W_A_store = []
-	N_1_store = []
-	I_G_store = []
-	I_R_store = []
-	Outgoing_flux = [ D*(W_A[2]-W_A[1])/dx ]
-
-	#Run numerical calculation
-	for timestep in range(N):
-		I_G_vals = I_G(timestep*dt)
-		I_R_vals = I_R(timestep*dt)
-
-		W_G_new = B.dot(W_G) + dt*f(N_1,W_G,I_G_vals)
-		W_R_new = B.dot(W_R) + dt*g(N_1,W_R,I_R_vals)
-		W_A_new = B.dot(W_A) + dt*h(N_1,W_A)
-		N_1_new = N_1 + dt*q(N_1, W_G, W_R, W_A)
-
-		W_G = W_G_new
-		W_R = W_R_new
-		W_A = W_A_new
-		N_1 = N_1_new
-
-		if timestep % 100 == 0:	
-			if timestep*dt < 30e-9:
-				W_G_store.append(W_G)
-				W_R_store.append(W_R)
-				W_A_store.append(W_A)
-				N_1_store.append(N_1)
-				I_G_store.append(I_G_vals)
-				I_R_store.append(I_R_vals)
-				Outgoing_flux.append( (D*(W_A[2]-W_A[1])/dx ))
-			else:
-				W_A_store.append(W_A)
-				N_1_store.append(N_1)
-				Outgoing_flux.append( (D*(W_A[2]-W_A[1])/dx ))
-		print(timestep, end='\r')
-		
-
-	W_G_store = np.array(W_G_store)
-	W_R_store = np.array(W_R_store)
-	W_A_store = np.array(W_A_store)
-	N_1_store = np.array(N_1_store)
-	I_G_store = np.array(I_G_store)
-	I_R_store = np.array(I_R_store)
-	Outgoing_flux = np.array(Outgoing_flux)
-
+# convert storage lists to numpy arrays
+I_G_storage = np.array(I_G_storage)
+N_pop_storage = np.array(N_pop_storage)
+W_G_storage = np.array(W_G_storage)
+W_A_storage = np.array(W_A_storage)
+Flux = W_A_storage[:,2]-W_A_storage[:,1]
 """
-np.savetxt('./Data/W_G_store.txt',W_G_store, delimiter=',',newline='\n')
-np.savetxt('./Data/W_R_store.txt',W_R_store, delimiter=',',newline='\n')
-np.savetxt('./Data/W_A_store.txt',W_A_store, delimiter=',',newline='\n')
-np.savetxt('./Data/N_1_store.txt',N_1_store, delimiter=',',newline='\n')
-np.savetxt('./Data/I_G_store.txt',I_G_store, delimiter=',',newline='\n')
-np.savetxt('./Data/I_R_store.txt',I_R_store, delimiter=',',newline='\n')
-np.savetxt('./Data/Outgoing_flux.txt',Outgoing_flux, delimiter=',',newline='\n')
+np.savetxt('./Data/W_G_storage.txt',W_G_storage, delimiter=',',newline='\n')
+np.savetxt('./Data/W_A_storage.txt',W_A_storage, delimiter=',',newline='\n')
+np.savetxt('./Data/N_pop_storage.txt',N_pop_storage, delimiter=',',newline='\n')
+np.savetxt('./Data/I_G_storage.txt',I_G_storage, delimiter=',',newline='\n')
+np.savetxt('./Data/Flux.txt',Flux, delimiter=',',newline='\n')
 """
