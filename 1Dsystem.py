@@ -7,7 +7,7 @@ sig_em = 3.0e-23 # emission cross section
 tau_e = 3.2e-6 # lifetime of excited state
 N_t = 1.6e25 # total concentration of laser particles
 l = 100.e-6 # transport mean free path
-kappa_e = 2.e-4 # extinction coefficient (see spec sheet in shared folder)
+kappa_e = 5.e-4 # extinction coefficient (see spec sheet in shared folder)
 tau_G = 14.e-9 # pump pulse FWHM
 t_G = 15.e-9 # time of maxima of pump pulse 
 illum_area = np.pi*(2.e-3)**2 # illumation area
@@ -47,12 +47,12 @@ I_G_storage = []
 # function definitions
 def ASE_RHS(W_A, N_pop):
 	"""Calculates the right hand side of the PDE for amplified spontaneous emission"""
-	M = np.diagflat([0]+[ (dt*D/dz**2) for i in range(J-2)], -1) + np.diagflat([0]+[0]+[ (1. - 2*dt*D/dz**2 + dt*sig_em*v*N_pop[i]*N_t) for i in range(J-4)]+[0]+[0]) + np.diagflat([ (dt*D/dz**2) for i in range(J-2)]+[0], 1)
+	M = np.diagflat([0]+[ (dt*D/dz**2) for i in range(J-3)]+[0], -1) + np.diagflat([0]+[0]+[ (1. - 2*dt*D/dz**2 + dt*sig_em*v*N_pop[i]*N_t) for i in range(J-4)]+[0]+[0]) + np.diagflat([0]+[ (dt*D/dz**2) for i in range(J-3)]+[0], 1)
 	return M.dot(W_A) + dt*c*N_t*E_A/tau_e/I_G0 * N_pop
 
 def PUMP_RHS(W_G, N_pop, I_G):
 	"""Calculates the right hand side of the PDE for the pump"""
-	M = np.diagflat([0]+[ (dt*D/dz**2) for i in range(J-2)], -1) + np.diagflat([0]+[0]+ [(1. - 2*dt*D/dz**2 - dt*sig_abs*v*N_t*(1-N_pop[i]) ) for i in range(J-4) ]+[0]+[0]) + np.diagflat([ (dt*D/dz**2) for i in range(J-2)]+[0], 1)
+	M = np.diagflat([0]+[ (dt*D/dz**2) for i in range(J-3)]+[0], -1) + np.diagflat([0]+[0]+ [(1. - 2*dt*D/dz**2 - dt*sig_abs*v*N_t*(1-N_pop[i]) ) for i in range(J-4) ]+[0]+[0]) + np.diagflat([0]+[ (dt*D/dz**2) for i in range(J-3)]+[0], 1)
 	return M.dot(W_G) + dt/tau_e *I_G
 
 def POP_RHS(N_pop, W_G, W_A):
