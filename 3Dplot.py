@@ -1,4 +1,5 @@
 import numpy as np
+from scipy import constants as spc
 from matplotlib import pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
@@ -6,10 +7,10 @@ fig = plt.figure(figsize=(20, 10))
 ax = fig.add_subplot(111, projection='3d')
 plt.hold(True)
 
-store = np.loadtxt("./Data/I_G_store.txt", delimiter=',')
+store = np.loadtxt("./Data/L=1/W_A.I=1e12.L=1.txt", delimiter=',')
 
-l = 40.e-6
-L = 0.8e-3  # length of slap
+l = 100.e-6
+L = 0.001  # length of slap
 dx = l / 2.  # space steps across slap
 x = np.arange(-l, L + l + dx, dx)  # array of space steps
 
@@ -31,18 +32,23 @@ for i in range(len(tableau20)):
     r, g, b = tableau20[i]  
     tableau20[i] = (r / 255., g / 255., b / 255.) 
 """
+c = spc.c/1.35
+E_A = 6.63e-34*c/700e-9
+I_G0 = 1.e12
+
 
 for i in range(x.shape[0]):
-    position = (i * dx * np.ones(store.shape[0])) * 1e3  # position in microns
-    ax.plot(xs=time, ys=store[:, i], zs=position, zdir='y', color='r')
+    position = (i * dx * np.ones(store.shape[0])) * 1e3 - l*1e3  # position in microns
+    ax.plot(xs=time, ys=I_G0/c/E_A*store[:, i], zs=position, zdir='y', color='r', label="1 mm sample thickness\n1x10$^{12}$ $Jm^{-3}$ pump intensity" if i ==0 else "")
 
 ax.set_xlabel('Time (ns)')
 ax.set_xlim(0, 50)
 ax.set_ylabel('Position (mm)')
-ax.set_ylim(0, 0.88)
+ax.set_ylim(0, 1)
 ax.set_zlabel('Intensity')
-ax.set_zlim(0, 15e3)
-ax.set_title('Pump intensity')
-fig.savefig('Graph.png')
+ax.set_zlim(0, 1.2e23)
+ax.set_title('Amp. Spont. Emission intensity profile')
+plt.legend(loc=1)
+#fig.savefig('Graph.png')
 
-#plt.show()
+plt.show()

@@ -18,7 +18,7 @@ D = v*l/3. # diffusion coeffecient
 
 E_G = 6.63e-34*c/532e-9 # energy of pump photons
 E_A = 6.63e-34*c/700e-9 # energy of emitted photons
-I_G0 = 175e-3/14.e-9/illum_area # average pump intensity
+I_G0 = 1.e11 # average pump intensity
 
 #define space parameters
 L = 0.001 # length of medium
@@ -41,7 +41,7 @@ N_pop = np.zeros(z.shape[0])
 # lists for storage
 W_G_storage = []
 W_A_storage = []
-N_pop_storage = [] # Note this is N_1/N_t
+N_pop_storage = []
 I_G_storage = []
 
 # function definitions
@@ -103,9 +103,9 @@ W_G_storage = np.array(W_G_storage)
 W_A_storage = np.array(W_A_storage)
 Flux = W_A_storage[:,2]-W_A_storage[:,1]
 """
-np.savetxt('./Data/W_G_storage.txt',W_G_storage, delimiter=',',newline='\n')
-np.savetxt('./Data/W_A_storage.txt',W_A_storage, delimiter=',',newline='\n')
-np.savetxt('./Data/N_pop_storage.txt',N_pop_storage, delimiter=',',newline='\n')
-np.savetxt('./Data/I_G_storage.txt',I_G_storage, delimiter=',',newline='\n')
-np.savetxt('./Data/Flux.txt',Flux, delimiter=',',newline='\n')
+np.savetxt('./Data/W_G.I=8e30.L=1.txt',W_G_storage, delimiter=',',newline='\n')
+np.savetxt('./Data/W_A.I=8e30.L=1.txt',W_A_storage, delimiter=',',newline='\n')
+np.savetxt('./Data/N_pop.I=8e30.L=1.txt',N_pop_storage, delimiter=',',newline='\n')
+np.savetxt('./Data/I_G.I=8e30.L=1.txt',I_G_storage, delimiter=',',newline='\n')
+np.savetxt('./Data/Flux.I=8e30.L=1.txt',Flux, delimiter=',',newline='\n')
 """
