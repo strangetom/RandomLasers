@@ -10,9 +10,21 @@ Masters project modelling random lasers
 **[8 February](#8-february)**  
 **[10 February](#10-february)**  
 **[14 February](#14-february)**   
-**[19 February](#19-february)** 
+**[19 February](#19-february)**  
+**[21 February](#21-february)**  
 
 ___________
+# 21 February  
+* Crank-Nicolson method has been implemented. Still slightly unsure of boundary conditions, but the results seem to be as expected.  
+* Since CN is always stable, we can reduce the number of time steps. However since some parameters are multiplied by the time step, this changes the results. See Figure 13 below:  
+![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/21Feb/Step%20size%20comparison.png "Figure 13")  
+* We can also show how the pump intensity affects the outgoing flux. See Figure 14 below:  
+![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/21Feb/Pump%20intensity%20comparison.png "Figure 14")  
+* And to finish off, a big plot showing how thickness and pump intensity affect the flux and excitation level. The plot in the bottom left corner has a thickness of 1 mm and a pump intensity of 4x10<sup>10</sup> Wm<sup>-2</sup>.  
+ Going right along the plots, the thickness increases in 1 mm steps.  
+ Going up along the plots, the pump intensity doubles.  
+![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/21Feb/1Dsystem%20length%20and%20pump%20variation.png "Figure 15")  
+
 # 19 February
 * The PDEs were made dimensionless by introducing introducing dimensionless variables. Variables were made dimensionless by dividing by the largest value with the dimension.  
 * These were discretized and implemented in code using the forward Euler method. Crank-Nicolson has not been attmepted yet (it will be).  
