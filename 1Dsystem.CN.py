@@ -115,8 +115,9 @@ I_G_storage = np.array(I_G_storage)
 N_pop_storage = np.array(N_pop_storage)
 W_G_storage = np.array(W_G_storage)
 W_A_storage = np.array(W_A_storage)
-Flux = (W_A_storage[:,0]
-
+Flux = (W_A_storage[:,0])
+"""
 np.savetxt('./Data//L=1/W_A.I=4e10.L=1.txt',W_A_storage, delimiter=',',newline='\n')
 np.savetxt('./Data/L=1/N_pop.I=4e10.L=1.txt',N_pop_storage, delimiter=',',newline='\n')
 np.savetxt('./Data/L=1/Flux.I=4e10.L=1.txt',Flux, delimiter=',',newline='\n')
+"""
