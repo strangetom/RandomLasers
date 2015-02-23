@@ -130,16 +130,16 @@ fig.text(0.08, 0.5, 'Flux ($10^{22}s^{-1}$)', ha='center', va='center',rotation=
 fig.text(0.95, 0.5, 'Excitation level', ha='center', va='center',rotation=270,fontsize=18)
 
 #Label each figure
-fig.text(0.26, 0.325, r'$L = 1 mm$''\n'r'$I_{G0} = 4\times10^{10}Wm^{-2}$')
-fig.text(0.26, 0.59, r'$L = 1 mm$''\n'r'$I_{G0} = 8\times10^{10}Wm^{-2}$')
-fig.text(0.26, 0.855, r'$L = 1 mm$''\n'r'$I_{G0} = 16\times10^{10}Wm^{-2}$')
+fig.text(0.26, 0.325, r'$L = 1 mm$''\n'r'$I_{G0} = 4\times10^{10}Wm^{-2}$', bbox=dict(facecolor='none',edgecolor='black'))
+fig.text(0.26, 0.59, r'$L = 1 mm$''\n'r'$I_{G0} = 8\times10^{10}Wm^{-2}$', bbox=dict(facecolor='none',edgecolor='black'))
+fig.text(0.26, 0.855, r'$L = 1 mm$''\n'r'$I_{G0} = 16\times10^{10}Wm^{-2}$', bbox=dict(facecolor='none',edgecolor='black'))
 
-fig.text(0.52, 0.325, r'$L = 2 mm$''\n'r'$I_{G0} = 4\times10^{10}Wm^{-2}$')
-fig.text(0.52, 0.59, r'$L = 2 mm$''\n'r'$I_{G0} = 8\times10^{10}Wm^{-2}$')
-fig.text(0.51, 0.855, r'$L = 2 mm$''\n'r'$I_{G0} = 16\times10^{10}Wm^{-2}$')
+fig.text(0.52, 0.325, r'$L = 2 mm$''\n'r'$I_{G0} = 4\times10^{10}Wm^{-2}$', bbox=dict(facecolor='none',edgecolor='black'))
+fig.text(0.52, 0.59, r'$L = 2 mm$''\n'r'$I_{G0} = 8\times10^{10}Wm^{-2}$', bbox=dict(facecolor='none',edgecolor='black'))
+fig.text(0.51, 0.855, r'$L = 2 mm$''\n'r'$I_{G0} = 16\times10^{10}Wm^{-2}$', bbox=dict(facecolor='none',edgecolor='black'))
 
-fig.text(0.78, 0.325, r'$L = 3 mm$''\n'r'$I_{G0} = 4\times10^{10}Wm^{-2}$')
-fig.text(0.78, 0.59, r'$L = 3 mm$''\n'r'$I_{G0} = 8\times10^{10}Wm^{-2}$')
-fig.text(0.77, 0.855, r'$L = 3 mm$''\n'r'$I_{G0} = 16\times10^{10}Wm^{-2}$')
+fig.text(0.78, 0.325, r'$L = 3 mm$''\n'r'$I_{G0} = 4\times10^{10}Wm^{-2}$', bbox=dict(facecolor='none',edgecolor='black'))
+fig.text(0.78, 0.59, r'$L = 3 mm$''\n'r'$I_{G0} = 8\times10^{10}Wm^{-2}$', bbox=dict(facecolor='none',edgecolor='black'))
+fig.text(0.77, 0.855, r'$L = 3 mm$''\n'r'$I_{G0} = 16\times10^{10}Wm^{-2}$', bbox=dict(facecolor='none',edgecolor='black'))
 
 fig.savefig('1Dsystem length and pump variation.png')
