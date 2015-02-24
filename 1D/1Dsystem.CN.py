@@ -2,14 +2,16 @@ import numpy as np
 from scipy import constants as spc
 
 #define constants
-sig_abs = 3.0e-24 # bsorption cross section
+sig_abs = 3.0e-24 # absorption cross section
 sig_em = 3.0e-23 # emission cross section
 tau_e = 3.2e-6 # lifetime of excited state
 N_t = 1.6e25 # total concentration of laser particles
 l = 100.e-6 # transport mean free path
 kappa_e = 5.e-4 # extinction coefficient (see spec sheet in shared folder)
 tau_G = 14.e-9 # pump pulse FWHM
+tau_R = 14.e-9 # probe pulse FWHM
 t_G = 15.e-9 # time of maxima of pump pulse 
+t_R = 15.e-9 # time of maxima of probe pulse 
 illum_area = np.pi*(2.e-3)**2 # illumation area
 n = 1.35 # average refractive index of medium
 c = spc.c/n # speed of light in medium
@@ -18,7 +20,7 @@ D = v*l/3. # diffusion coeffecient
 
 E_G = 6.63e-34*c/532e-9 # energy of pump photons
 E_A = 6.63e-34*c/700e-9 # energy of emitted photons
-I_G0 = 16.e10 # average pump intensity
+I_G0 = 4.e10 # average pump intensity
 
 #define space parameters
 L = 0.001 # length of medium
@@ -62,9 +64,18 @@ def PUMP_RHS(W_G, N_pop, I_G):
 
 def PUMP_LHS(N_mid_step):
 	"""Calculates the left hand side of the PDE for the pump"""
-	M = np.diagflat([0]+[ -dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([1]+[ (1. + 2*dt*D/(2*dz**2) - dt*sig_abs*v*N_t*(1-N_mid_step[i])) for i in range(J-2)]+[1]) + np.diagflat([ -dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
+	M = np.diagflat([0]+[ -dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([1]+[ (1. + 2*dt*D/(2*dz**2) + dt*sig_abs*v*N_t*(1-N_mid_step[i])) for i in range(J-2)]+[1]) + np.diagflat([ -dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
 	return M
 
+def PROBE_RHS(W_R, N_pop, I_R):
+	"""Calculates the right hand side of the PDE for the pump"""
+	M = np.diagflat([0]+[ dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([0]+[(1. - 2*dt*D/(2*dz**2) + dt*sig_em*v*N_t*N_mid_step[i]) for i in range(J-2) ]+[0]) + np.diagflat([ dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
+	return M.dot(W_R) + dt/tau_e *I_R
+
+def PROBE_LHS(N_mid_step):
+	"""Calculates the left hand side of the PDE for the pump"""
+	M = np.diagflat([0]+[ -dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([1]+[ (1. + 2*dt*D/(2*dz**2) - dt*sig_em*v*N_t*N_mid_step[i]) for i in range(J-2)]+[1]) + np.diagflat([ -dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
+	return M
 
 def POP_RHS(N_pop, W_G, W_A):
 	"""Calculates the right hand side of the PDE for the excited population"""
@@ -76,6 +87,12 @@ def POP_RHS(N_pop, W_G, W_A):
 def I_G(t):
 	"""Calculates the intensity through space at a given time"""
 	I_vec = c*tau_e/l * np.sqrt(4*np.log(2)/np.pi)*np.exp(-kappa_e*z)*np.exp( -4*np.log(2)*(t-t_G-z/c)**2/tau_G**2)
+	I_vec[0]=I_vec[-1] = 0
+	return I_vec
+
+def I_R(t):
+	"""Calculates the intensity through space at a given time"""
+	I_vec = c*tau_e/l * np.sqrt(4*np.log(2)/np.pi)*np.exp(-kappa_e*z)*np.exp( -4*np.log(2)*(t-t_R-z/c)**2/tau_R**2)
 	I_vec[0]=I_vec[-1] = 0
 	return I_vec
 
