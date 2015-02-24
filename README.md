@@ -12,8 +12,15 @@ Masters project modelling random lasers
 **[14 February](#14-february)**   
 **[19 February](#19-february)**  
 **[21 February](#21-february)**  
+**[24 February](#24-february)**  
 
 ___________
+# 24 February  
+* Some corrections were made to the 1D CN code, and the code to include and implement the probe pulse was added in, but hasn't been used. The graphs from [21 February](#21-february) have been updated accordingly.  
+* The theory behind solving a 2 dimensional set of equations has been looked into. See section 20.3.2 of Numerical Methods (3<sup>rd</sup> edition).  
+* We can solve the 2 dimensional equations in a similar way to the tridiagonal matrix equation we get in 1 dimension. The difference is that we have 2 equations and we move in half steps, alternating between solving the x-derivatives and the y-derivatives.  
+
+
 # 21 February  
 * Crank-Nicolson method has been implemented. Still slightly unsure of boundary conditions, but the results seem to be as expected.  
 * Since CN is always stable, we can reduce the number of time steps. However since some parameters are multiplied by the time step, this changes the results. See Figure 13 below:  
