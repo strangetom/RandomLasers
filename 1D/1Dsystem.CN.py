@@ -20,7 +20,8 @@ D = v*l/3. # diffusion coeffecient
 
 E_G = 6.63e-34*c/532e-9 # energy of pump photons
 E_A = 6.63e-34*c/700e-9 # energy of emitted photons
-I_G0 = 4.e10 # average pump intensity
+I_G0 = 16.e10 # average pump intensity
+I_R0 = 4.e10 # average probe intensity
 
 #define space parameters
 L = 0.001 # length of medium
@@ -37,11 +38,13 @@ dt = T/N # time increment
 
 # initial conditions
 W_G = np.zeros(z.shape[0])
+W_R = np.zeros(z.shape[0])
 W_A = np.zeros(z.shape[0])
 N_pop = np.zeros(z.shape[0])
 
 # lists for storage
 W_G_storage = []
+W_R_storage = []
 W_A_storage = []
 N_pop_storage = []
 I_G_storage = []
@@ -92,7 +95,7 @@ def I_G(t):
 
 def I_R(t):
 	"""Calculates the intensity through space at a given time"""
-	I_vec = c*tau_e/l * np.sqrt(4*np.log(2)/np.pi)*np.exp(-kappa_e*z)*np.exp( -4*np.log(2)*(t-t_R-z/c)**2/tau_R**2)
+	I_vec = I_R0/I_G0*c*tau_e/l * np.sqrt(4*np.log(2)/np.pi)*np.exp(-kappa_e*z)*np.exp( -4*np.log(2)*(t-t_R-z/c)**2/tau_R**2)
 	I_vec[0]=I_vec[-1] = 0
 	return I_vec
 
@@ -100,6 +103,7 @@ for timestep in range(N):
 
 	# get intensity spatial profile at current time
 	I_G_mid_step = I_G(timestep*dt + dt)
+	I_R_mid_step = I_R(timestep*dt + dt)
 
 	# calculate next time steps for variables
 	N_pop_next = POP_RHS(N_pop, W_G, W_A)
@@ -107,14 +111,17 @@ for timestep in range(N):
 
 	# Calculate premultiplying matrices for the pump and ASE
 	A_pump = PUMP_LHS(N_mid_step)
+	A_probe = PROBE_LHS(N_mid_step)
 	A_ASE = ASE_LHS(N_mid_step)
 
 	W_G_next = np.linalg.solve(A_pump, PUMP_RHS(W_G, N_mid_step, I_G_mid_step) )
+	W_R_next = np.linalg.solve(A_probe, PROBE_RHS(W_R, N_mid_step, I_G_mid_step) )
 	W_A_next = np.linalg.solve(A_ASE, ASE_RHS(W_A, N_mid_step) )
 
 	# set newly calculated values to current time for next loop
 	N_pop = N_pop_next
 	W_G = W_G_next
+	W_R = W_R_next
 	W_A = W_A_next
 
 	if timestep % 50 == 0:
@@ -122,6 +129,7 @@ for timestep in range(N):
 		I_G_storage.append(I_G_mid_step)
 		N_pop_storage.append(N_pop)
 		W_G_storage.append(W_G)
+		W_R_storage.append(W_R)
 		W_A_storage.append(W_A)
 
 	print(timestep, end='\r')
@@ -132,6 +140,7 @@ I_G_storage = np.array(I_G_storage)
 N_pop_storage = np.array(N_pop_storage)
 W_G_storage = np.array(W_G_storage)
 W_A_storage = np.array(W_A_storage)
+W_R_storage = np.array(W_R_storage)
 Flux = (W_A_storage[:,0])
 """
 np.savetxt('./Data//L=1/W_A.I=4e10.L=1.txt',W_A_storage, delimiter=',',newline='\n')
