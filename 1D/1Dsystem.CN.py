@@ -20,8 +20,8 @@ D = v*l/3. # diffusion coeffecient
 
 E_G = 6.63e-34*c/532e-9 # energy of pump photons
 E_A = 6.63e-34*c/700e-9 # energy of emitted photons
-I_G0 = 16.e10 # average pump intensity
-I_R0 = 16.e10 # average probe intensity
+I_G0 = 2.e11 # average pump intensity
+I_R0 = 2.e11 # average probe intensity
 
 #define space parameters
 L = 0.001 # length of medium
@@ -52,32 +52,32 @@ I_G_storage = []
 # function definitions
 def ASE_RHS(W_A, N_mid_step):
 	"""Calculates the right hand side of the PDE for amplified spontaneous emission"""
-	M = np.diagflat([0]+[ dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([0]+[ (1. - 2*dt*D/(2*dz**2) + dt*sig_em*v*N_mid_step[i]*N_t) for i in range(J-2)]+[0]) + np.diagflat([ dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
+	M = np.diagflat([0]+[ dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([0]+[ (1. - 2*dt*D/(2*dz**2) + dt*sig_em*v*N_mid_step[i]*N_t/2) for i in range(J-2)]+[0]) + np.diagflat([ dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
 	return M.dot(W_A) + dt*c*N_t*E_A/tau_e/I_G0 * N_pop
 
 def ASE_LHS(N_mid_step):
 	"""Calculates the left hand side of the PDE for amplified spontaneous emission"""
-	M = np.diagflat([0]+[ -dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([1]+[ (1. + 2*dt*D/(2*dz**2) - dt*sig_em*v*N_mid_step[i]*N_t) for i in range(J-2)]+[1]) + np.diagflat([ -dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
+	M = np.diagflat([0]+[ -dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([1]+[ (1. + 2*dt*D/(2*dz**2) - dt*sig_em*v*N_mid_step[i]*N_t/2) for i in range(J-2)]+[1]) + np.diagflat([ -dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
 	return M
 
 def PUMP_RHS(W_G, N_pop, I_G):
 	"""Calculates the right hand side of the PDE for the pump"""
-	M = np.diagflat([0]+[ dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([0]+[(1. - 2*dt*D/(2*dz**2) - dt*sig_abs*v*N_t*(1-N_mid_step[i]) ) for i in range(J-2) ]+[0]) + np.diagflat([ dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
+	M = np.diagflat([0]+[ dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([0]+[(1. - 2*dt*D/(2*dz**2) - dt*sig_abs*v*N_t*(1-N_mid_step[i])/2) for i in range(J-2) ]+[0]) + np.diagflat([ dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
 	return M.dot(W_G) + dt/tau_e *I_G
 
 def PUMP_LHS(N_mid_step):
 	"""Calculates the left hand side of the PDE for the pump"""
-	M = np.diagflat([0]+[ -dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([1]+[ (1. + 2*dt*D/(2*dz**2) + dt*sig_abs*v*N_t*(1-N_mid_step[i])) for i in range(J-2)]+[1]) + np.diagflat([ -dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
+	M = np.diagflat([0]+[ -dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([1]+[ (1. + 2*dt*D/(2*dz**2) + dt*sig_abs*v*N_t*(1-N_mid_step[i])/2) for i in range(J-2)]+[1]) + np.diagflat([ -dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
 	return M
 
 def PROBE_RHS(W_R, N_pop, I_R):
 	"""Calculates the right hand side of the PDE for the pump"""
-	M = np.diagflat([0]+[ dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([0]+[(1. - 2*dt*D/(2*dz**2) + dt*sig_em*v*N_t*N_mid_step[i]) for i in range(J-2) ]+[0]) + np.diagflat([ dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
+	M = np.diagflat([0]+[ dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([0]+[(1. - 2*dt*D/(2*dz**2) + dt*sig_em*v*N_t*N_mid_step[i]/2) for i in range(J-2) ]+[0]) + np.diagflat([ dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
 	return M.dot(W_R) + dt/tau_e *I_R
 
 def PROBE_LHS(N_mid_step):
 	"""Calculates the left hand side of the PDE for the pump"""
-	M = np.diagflat([0]+[ -dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([1]+[ (1. + 2*dt*D/(2*dz**2) - dt*sig_em*v*N_t*N_mid_step[i]) for i in range(J-2)]+[1]) + np.diagflat([ -dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
+	M = np.diagflat([0]+[ -dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([1]+[ (1. + 2*dt*D/(2*dz**2) - dt*sig_em*v*N_t*N_mid_step[i]/2) for i in range(J-2)]+[1]) + np.diagflat([ -dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
 	return M
 
 def POP_RHS(N_pop, W_G, W_A):
@@ -143,7 +143,7 @@ W_A_storage = np.array(W_A_storage)
 W_R_storage = np.array(W_R_storage)
 Flux = (W_A_storage[:,0])
 """
-np.savetxt('./Data//L=1/W_A.I=4e10.L=1.txt',W_A_storage, delimiter=',',newline='\n')
+np.savetxt('./Data/L=1/W_A.I=4e10.L=1.txt',W_A_storage, delimiter=',',newline='\n')
 np.savetxt('./Data/L=1/N_pop.I=4e10.L=1.txt',N_pop_storage, delimiter=',',newline='\n')
 np.savetxt('./Data/L=1/Flux.I=4e10.L=1.txt',Flux, delimiter=',',newline='\n')
 """
