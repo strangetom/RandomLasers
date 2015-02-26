@@ -21,11 +21,11 @@ D = v*l/3. # diffusion coeffecient
 E_G = 6.63e-34*c/532e-9 # energy of pump photons
 E_A = 6.63e-34*c/700e-9 # energy of emitted photons
 E_R = 6.63e-34*c/650e-9 # energy of probe photons
-I_G0 = 16.e10 # average pump intensity
-I_R0 = 16.e10 # average probe intensity
+I_G0 = 5.e10 # average pump intensity
+I_R0 = 0#16.e11 # average probe intensity
 
 #define space parameters
-L = 0.001 # length of medium
+L = 0.002 # length of medium
 dz = l/2 # space increment
 z = np.arange(-l/2, L+l/2+dz, dz) # vector in space
 z[0] = z[1] # modifiy space vector so pulses don't decay before entering medium
@@ -53,32 +53,32 @@ I_G_storage = []
 # function definitions
 def PUMP_RHS(W_G, N_pop, I_G):
 	"""Calculates the right hand side of the PDE for the pump"""
-	M = np.diagflat([ dt*D/(2*dz**2) for i in range(J-1)], -1) + np.diagflat([(1. - 2*dt*D/(2*dz**2) - dt/4*sig_abs*v*N_t*(1-N_mid_step[i][i]) ) for i in range(J) ]) + np.diagflat([ dt*D/(2*dz**2) for i in range(J-1)], 1)
+	M = np.diagflat([0]+[ dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([0]+[(1. - 2*dt*D/(2*dz**2) - dt/4*sig_abs*v*N_t*(1-N_mid_step[i][i])) for i in range(J-2) ]+[0]) + np.diagflat([ dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
 	return M.dot(W_G) + dt/tau_e *I_G.reshape(J,1)
 
 def PUMP_LHS(N_mid_step):
 	"""Calculates the left hand side of the PDE for the pump"""
-	M = np.diagflat([ -dt*D/(2*dz**2) for i in range(J-1)], -1) + np.diagflat([(1. + 2*dt*D/(2*dz**2) + dt/4*sig_abs*v*N_t*(1-N_mid_step[i][i])) for i in range(J) ]) + np.diagflat([ -dt*D/(2*dz**2) for i in range(J-1)], 1)
+	M = np.diagflat([0]+[ -dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([1]+[ (1. + 2*dt*D/(2*dz**2) + dt/4*sig_abs*v*N_t*(1-N_mid_step[i][i])) for i in range(J-2)]+[1]) + np.diagflat([ -dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
 	return M
 
 def ASE_RHS(W_A, N_mid_step):
 	"""Calculates the right hand side of the PDE for amplified spontaneous emission"""
-	M = np.diagflat([ dt*D/(2*dz**2) for i in range(J-1)], -1) + np.diagflat([ (1. - 2*dt*D/(2*dz**2) + dt/4*sig_em*v*N_mid_step[i][i]*N_t) for i in range(J) ]) + np.diagflat([ dt*D/(2*dz**2) for i in range(J-1)], 1)
+	M = np.diagflat([0]+[ dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([0]+[ (1. - 2*dt*D/(2*dz**2) + dt/4*sig_em*v*N_mid_step[i][i]*N_t) for i in range(J-2)]+[0]) + np.diagflat([ dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
 	return M.dot(W_A) + dt*c*N_t*E_A/tau_e/I_G0 * N_mid_step
 
 def ASE_LHS(N_mid_step):
 	"""Calculates the left hand side of the PDE for amplified spontaneous emission"""
-	M = np.diagflat([ -dt*D/(2*dz**2) for i in range(J-1)], -1) + np.diagflat([ (1. + 2*dt*D/(2*dz**2) - dt/4*sig_em*v*N_mid_step[i][i]*N_t) for i in range(J) ]) + np.diagflat([ -dt*D/(2*dz**2) for i in range(J-1)], 1)
+	M = np.diagflat([0]+[ -dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([1]+[ (1. + 2*dt*D/(2*dz**2) - dt/4*sig_em*v*N_mid_step[i][i]*N_t) for i in range(J-2)]+[1]) + np.diagflat([ -dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
 	return M
 
 def PROBE_RHS(W_R, N_pop, I_R):
 	"""Calculates the right hand side of the PDE for the pump"""
-	M = np.diagflat([ dt*D/(2*dz**2) for i in range(J-1)], -1) + np.diagflat([(1. - 2*dt*D/(2*dz**2) + dt/4*sig_em*v*N_t*N_mid_step[i][i]) for i in range(J) ]) + np.diagflat([ dt*D/(2*dz**2) for i in range(J-1)], 1)
+	M = np.diagflat([0]+[ dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([0]+[(1. - 2*dt*D/(2*dz**2) + dt/4*sig_em*v*N_t*N_mid_step[i][i]) for i in range(J-2) ]+[0]) + np.diagflat([ dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
 	return M.dot(W_R) + dt/tau_e *I_R.reshape(J,1)
 
 def PROBE_LHS(N_mid_step):
 	"""Calculates the left hand side of the PDE for the pump"""
-	M = np.diagflat([ -dt*D/(2*dz**2) for i in range(J-1)], -1) + np.diagflat([ (1. + 2*dt*D/(2*dz**2) - dt/4*sig_em*v*N_t*N_mid_step[i][i]) for i in range(J)]) + np.diagflat([ -dt*D/(2*dz**2) for i in range(J-1)], 1)
+	M = np.diagflat([0]+[ -dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([1]+[ (1. + 2*dt*D/(2*dz**2) - dt/4*sig_em*v*N_t*N_mid_step[i][i]) for i in range(J-2)]+[1]) + np.diagflat([ -dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
 	return M
 
 def POP_RHS(N_pop, W_G, W_A, W_R):
@@ -99,14 +99,6 @@ def I_R(t):
 	I_vec = I_R0/I_G0*c*tau_e/l * np.sqrt(4*np.log(2)/np.pi)*np.exp(-kappa_e*z)*np.exp( -4*np.log(2)*(t-t_R-z/c)**2/tau_R**2)
 	I_vec[0]=I_vec[-1] = 0
 	return I_vec
-
-def FORCE_BOUNDARY_CONDITIONS(W):
-	"""Forces the values around the edges of the matrices for energy density to 0"""
-	W[:,-1] = 0
-	W[:,0] = 0
-	W[:][0] = 0
-	W[:][-1] = 0
-	return W
 
 for timestep in range(N):
 
@@ -132,10 +124,6 @@ for timestep in range(N):
 	W_R_mid_step = np.linalg.solve(A_probe, PROBE_RHS(W_R, N_mid_step, I_R_mid_step) )
 	W_A_mid_step = np.linalg.solve(A_ASE, ASE_RHS(W_A, N_mid_step) )
 
-	W_G_mid_step = FORCE_BOUNDARY_CONDITIONS(W_G_mid_step)
-	W_R_mid_step = FORCE_BOUNDARY_CONDITIONS(W_R_mid_step)
-	W_A_mid_step = FORCE_BOUNDARY_CONDITIONS(W_A_mid_step)
-
 	"""
 	Then we complete the calculation to get the n+1 step.
 	The x derivative is assumed constant for this step.
@@ -159,10 +147,6 @@ for timestep in range(N):
 	W_G_next = (np.linalg.solve(A_pump, PUMP_RHS(W_G_mid_step.T, N_mid_step.T, I_G_mid_step) )).T
 	W_R_next = (np.linalg.solve(A_probe, PROBE_RHS(W_R_mid_step.T, N_mid_step.T, I_R_mid_step) )).T
 	W_A_next = (np.linalg.solve(A_ASE, ASE_RHS(W_A_mid_step.T, N_mid_step.T) )).T
-
-	W_G_next = FORCE_BOUNDARY_CONDITIONS(W_G_next)
-	W_R_next = FORCE_BOUNDARY_CONDITIONS(W_R_next)
-	W_A_next = FORCE_BOUNDARY_CONDITIONS(W_A_next)
 
 	"""
 	Set newly calculated data ready for next loop and save data
