@@ -80,10 +80,10 @@ def PROBE_LHS(N_mid_step):
 	M = np.diagflat([0]+[ -dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([1]+[ (1. + 2*dt*D/(2*dz**2) - dt*sig_em*v*N_t*N_mid_step[i]/2) for i in range(J-2)]+[1]) + np.diagflat([ -dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
 	return M
 
-def POP_RHS(N_pop, W_G, W_A):
+def POP_RHS(N_pop, W_G, W_A, W_R):
 	"""Calculates the right hand side of the PDE for the excited population"""
 	term_1 = dt*sig_abs*v*(1-N_pop)*I_G0/(c*E_G) * W_G
-	term_2 = dt*sig_em*v*N_pop*I_G0/(c*E_A) * W_A
+	term_2 = dt*sig_em*v*N_pop*I_G0/c * (W_A/E_A + W_R/E_R)
 	term_3 = dt/tau_e * N_pop
 	return N_pop + (term_1 - term_2 - term_3)
 
@@ -106,7 +106,7 @@ for timestep in range(N):
 	I_R_mid_step = I_R(timestep*dt + dt/2)
 
 	# calculate next time steps for variables
-	N_pop_next = POP_RHS(N_pop, W_G, W_A)
+	N_pop_next = POP_RHS(N_pop, W_G, W_A, W_R)
 	N_mid_step = (N_pop_next + N_pop)/2
 
 	# Calculate premultiplying matrices for the pump and ASE
