@@ -1,7 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy import constants as spc
-plt.xkcd()
+)
 c = spc.c/1.35 # speed of light in medium
 E_A = 6.63e-34*c/700e-9
 
