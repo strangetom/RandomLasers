@@ -20,6 +20,7 @@ D = v*l/3. # diffusion coeffecient
 
 E_G = 6.63e-34*c/532e-9 # energy of pump photons
 E_A = 6.63e-34*c/700e-9 # energy of emitted photons
+E_R = 6.63e-34*c/650e-9 # energy of probe photons
 I_G0 = 16.e10 # average pump intensity
 I_R0 = 16.e10 # average probe intensity
 
@@ -80,10 +81,10 @@ def PROBE_LHS(N_mid_step):
 	M = np.diagflat([ -dt*D/(2*dz**2) for i in range(J-1)], -1) + np.diagflat([ (1. + 2*dt*D/(2*dz**2) - dt/4*sig_em*v*N_t*N_mid_step[i][i]) for i in range(J)]) + np.diagflat([ -dt*D/(2*dz**2) for i in range(J-1)], 1)
 	return M
 
-def POP_RHS(N_pop, W_G, W_A):
+def POP_RHS(N_pop, W_G, W_A, W_R):
 	"""Calculates the right hand side of the PDE for the excited population"""
 	term_1 = dt/2*sig_abs*v*(1-N_pop)*I_G0/(c*E_G) * W_G
-	term_2 = dt/2*sig_em*v*N_pop*I_G0/(c*E_A) * W_A
+	term_2 = dt/2*sig_em*v*N_pop*I_G0/c * (W_A/E_A + W_R/E_R)
 	term_3 = dt/2/tau_e * N_pop
 	return N_pop + (term_1 - term_2 - term_3)
 
@@ -119,7 +120,7 @@ for timestep in range(N):
 	I_R_mid_step = I_R(timestep*dt + dt/4)
 
 	# calculate intermediate time steps for variables
-	N_pop_next_half = POP_RHS(N_pop, W_G, W_A)
+	N_pop_next_half = POP_RHS(N_pop, W_G, W_A, W_R)
 	N_mid_step = (N_pop_next_half + N_pop)/2
 
 	# Calculate premultiplying matrices for the pump and ASE
@@ -131,6 +132,9 @@ for timestep in range(N):
 	W_R_mid_step = np.linalg.solve(A_probe, PROBE_RHS(W_R, N_mid_step, I_R_mid_step) )
 	W_A_mid_step = np.linalg.solve(A_ASE, ASE_RHS(W_A, N_mid_step) )
 
+	W_G_mid_step = FORCE_BOUNDARY_CONDITIONS(W_G_mid_step)
+	W_R_mid_step = FORCE_BOUNDARY_CONDITIONS(W_R_mid_step)
+	W_A_mid_step = FORCE_BOUNDARY_CONDITIONS(W_A_mid_step)
 
 	"""
 	Then we complete the calculation to get the n+1 step.
@@ -144,7 +148,7 @@ for timestep in range(N):
 	I_R_mid_step = I_R(timestep*dt + 3*dt/4)
 
 	# calculate next time steps for variables
-	N_pop_next = POP_RHS(N_pop_next_half, W_G_mid_step, W_A_mid_step)
+	N_pop_next = POP_RHS(N_pop_next_half, W_G_mid_step, W_A_mid_step, W_R_mid_step)
 	N_mid_step = (N_pop_next + N_pop_next_half)/2
 
 	# Calculate premultiplying matrices for the pump and ASE
@@ -156,6 +160,10 @@ for timestep in range(N):
 	W_R_next = (np.linalg.solve(A_probe, PROBE_RHS(W_R_mid_step.T, N_mid_step.T, I_R_mid_step) )).T
 	W_A_next = (np.linalg.solve(A_ASE, ASE_RHS(W_A_mid_step.T, N_mid_step.T) )).T
 
+	W_G_next = FORCE_BOUNDARY_CONDITIONS(W_G_next)
+	W_R_next = FORCE_BOUNDARY_CONDITIONS(W_R_next)
+	W_A_next = FORCE_BOUNDARY_CONDITIONS(W_A_next)
+
 	"""
 	Set newly calculated data ready for next loop and save data
 	"""
@@ -165,7 +173,7 @@ for timestep in range(N):
 	W_R = W_R_next
 	W_A = W_A_next
 
-	if timestep % 50 == 0:
+	if timestep % 100 == 0:
 		# store data in storage list
 		I_G_storage.append(I_G_mid_step)
 		N_pop_storage.append(N_pop)
