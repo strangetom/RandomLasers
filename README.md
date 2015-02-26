@@ -20,7 +20,10 @@ ___________
 * Further corrections made to the 1D CN code, mostly involved with the probe pulse so this hasn't changed any of the figures yet.
 * The 2D system code has been written and appears to work successfully. Figure 16 shown below shows the back scattered flux at the x=0 interface from a pump pulse of intensity 4x10<sup>10</sup> Wm<sup>-2</sup> and a thickness of 2 mm. Note that thickness of 1 mm do not seem to allow for laser action even with extremely large pump intensities (~10<sup>16</sup> Wm<sup>-2</sup>)
 ![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/26Feb/2D%20flux%20%2B%20excitation.png "Figure 16")  
-* A mega plot similar to the 1D one will be plotted, for L = 2, 3, 4 mm.  
+* A mega plot similar to the 1D one has been plotted, for L = 2, 3, 4 mm. See Figure 17 below:  
+![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/26Feb/2D%20system%20length%20and%20pump%20variation.png "Figure 17")  
+* Note how a lower pump pulse intensity results in higher output intensities than the 1D system. This is due to the plotted flux being the sum of the outgoing flux at each point along the interface.  
+* In it's current state, a 2 mm thick sample takes 5.5 minutes to run, a 4 mm thick sample takes almost 13 minutes. Some optimization is clearly needed. Using multiprocessing to run the W_'X'_next calculations simultaneously seems to actual slows things down.  
 
 # 24 February  
 * Some corrections were made to the 1D CN code, and the code to include and implement the probe pulse was added in, but hasn't been used. The graphs from [21 February](#21-february) have been updated accordingly.  
