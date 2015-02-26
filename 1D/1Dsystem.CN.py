@@ -53,7 +53,7 @@ I_G_storage = []
 def ASE_RHS(W_A, N_mid_step):
 	"""Calculates the right hand side of the PDE for amplified spontaneous emission"""
 	M = np.diagflat([0]+[ dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([0]+[ (1. - 2*dt*D/(2*dz**2) + dt*sig_em*v*N_mid_step[i]*N_t/2) for i in range(J-2)]+[0]) + np.diagflat([ dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
-	return M.dot(W_A) + dt*c*N_t*E_A/tau_e/I_G0 * N_pop
+	return M.dot(W_A) + dt*c*N_t*E_A/tau_e/I_G0 * N_mid_step
 
 def ASE_LHS(N_mid_step):
 	"""Calculates the left hand side of the PDE for amplified spontaneous emission"""
@@ -102,8 +102,8 @@ def I_R(t):
 for timestep in range(N):
 
 	# get intensity spatial profile at current time
-	I_G_mid_step = I_G(timestep*dt + dt)
-	I_R_mid_step = I_R(timestep*dt + dt)
+	I_G_mid_step = I_G(timestep*dt + dt/2)
+	I_R_mid_step = I_R(timestep*dt + dt/2)
 
 	# calculate next time steps for variables
 	N_pop_next = POP_RHS(N_pop, W_G, W_A)
