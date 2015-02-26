@@ -19,6 +19,7 @@ v = spc.c/n # transport velocity
 D = v*l/3. # diffusion coeffecient
 
 E_G = 6.63e-34*c/532e-9 # energy of pump photons
+E_G = 6.63e-34*c/350e-9 # energy of probe photons
 E_A = 6.63e-34*c/700e-9 # energy of emitted photons
 I_G0 = 2.e11 # average pump intensity
 I_R0 = 2.e11 # average probe intensity
