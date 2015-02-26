@@ -13,8 +13,15 @@ Masters project modelling random lasers
 **[19 February](#19-february)**  
 **[21 February](#21-february)**  
 **[24 February](#24-february)**  
+**[26 February](#26-february)**  
 
 ___________
+# 26 Febrary  
+* Further corrections made to the 1D CN code, mostly involved with the probe pulse so this hasn't changed any of the figures yet.
+* The 2D system code has been written and appears to work successfully. Figure 16 shown below shows the back scattered flux at the x=0 interface from a pump pulse of intensity 4x10<sup>10</sup> Wm<sup>-2</sup> and a thickness of 2 mm. Note that thickness of 1 mm do not seem to allow for laser action even with extremely large pump intensities (~10<sup>16</sup> Wm<sup>-2</sup>)
+![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/26Feb/2D%20flux%20%2B%20excitation.png "Figure 16")  
+* A mega plot similar to the 1D one will be plotted, for L = 2, 3, 4 mm.  
+
 # 24 February  
 * Some corrections were made to the 1D CN code, and the code to include and implement the probe pulse was added in, but hasn't been used. The graphs from [21 February](#21-february) have been updated accordingly.  
 * The theory behind solving a 2 dimensional set of equations has been looked into. See section 20.3.2 of Numerical Methods (3<sup>rd</sup> edition).  
