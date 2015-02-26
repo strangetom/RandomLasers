@@ -21,7 +21,7 @@ D = v*l/3. # diffusion coeffecient
 E_G = 6.63e-34*c/532e-9 # energy of pump photons
 E_A = 6.63e-34*c/700e-9 # energy of emitted photons
 E_R = 6.63e-34*c/650e-9 # energy of probe photons
-I_G0 = 5.e10 # average pump intensity
+I_G0 = 4.e10 # average pump intensity
 I_R0 = 0#16.e11 # average probe intensity
 
 #define space parameters
@@ -176,7 +176,7 @@ W_A_storage = np.array(W_A_storage)
 W_R_storage = np.array(W_R_storage)
 Flux = (W_A_storage[:,0])
 """
-np.savetxt('./Data//L=1/W_A.I=4e10.L=1.txt',W_A_storage, delimiter=',',newline='\n')
-np.savetxt('./Data/L=1/N_pop.I=4e10.L=1.txt',N_pop_storage, delimiter=',',newline='\n')
-np.savetxt('./Data/L=1/Flux.I=4e10.L=1.txt',Flux, delimiter=',',newline='\n')
+np.savetxt('./Data/L=1/W_A.I=4e10.L=1.txt',W_A_storage[:,int(J/2)], delimiter=',',newline='\n')
+np.savetxt('./Data/L=1/N_pop.I=4e10.L=1.txt',N_pop_storage[:,int(J/2)], delimiter=',',newline='\n')
+np.savetxt('./Data/L=1/Flux.I=4e10.L=1.txt',np.sum(Flux,axis=1), delimiter=',',newline='\n')
 """
