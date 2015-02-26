@@ -19,13 +19,13 @@ v = spc.c/n # transport velocity
 D = v*l/3. # diffusion coeffecient
 
 E_G = 6.63e-34*c/532e-9 # energy of pump photons
-E_G = 6.63e-34*c/350e-9 # energy of probe photons
+E_R = 6.63e-34*c/650e-9 # energy of probe photons
 E_A = 6.63e-34*c/700e-9 # energy of emitted photons
-I_G0 = 2.e11 # average pump intensity
-I_R0 = 2.e11 # average probe intensity
+I_G0 = 4.e11 # average pump intensity
+I_R0 = 0#2.e11 # average probe intensity
 
 #define space parameters
-L = 0.001 # length of medium
+L = 0.002 # length of medium
 dz = l/2 # space increment
 z = np.arange(-l/2, L+l/2+dz, dz) # vector in space
 z[0] = z[1] # modifiy space vector so pulses don't decay before entering medium
