@@ -23,8 +23,8 @@ ___________
  * [Pump energy density](https://github.com/strangetom/RandomLasers/blob/master/.graphs/27Feb/W_G.mp4)  
 ![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/27Feb/W_G.gif "Figure 18")    
  * [Excitation level](https://github.com/strangetom/RandomLasers/blob/master/.graphs/27Feb/N_pop.mp4)  
-![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/27Feb/N_pop.gif "Figure 19") 
- * [Amplified spontaneous emission](https://github.com/strangetom/RandomLasers/blob/master/.graphs/27Feb/W_A.mp4)
+![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/27Feb/N_pop.gif "Figure 19")   
+ * [Amplified spontaneous emission](https://github.com/strangetom/RandomLasers/blob/master/.graphs/27Feb/W_A.mp4)  
 ![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/27Feb/W_A.gif "Figure 20") 
   
 # 26 February  
