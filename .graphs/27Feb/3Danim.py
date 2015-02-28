@@ -5,10 +5,10 @@ from matplotlib import cm
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.animation as animation
 
-data = np.load("W_A_storage.npy")
+data = np.load("N_pop_storage.npy")
 
 l = 100.e-6
-L = 0.002  # length of slap
+L = 0.003  # length of slap
 dx = l / 2.  # space steps across slap
 X = np.arange(-l/2, L + l/2 + dx, dx)/1e-3  # array of space step
 Y = X.copy()
@@ -21,10 +21,10 @@ def update(i, ax, fig):
 	ax.cla()
 	Z = data[i*10]
 	surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1,  cmap=cm.jet,linewidth=0)
-	ax.set_zlim(0, 80)
+	ax.set_zlim(0, 0.22)
 	ax.set_xlabel('X distance (mm)')
 	ax.set_ylabel('Y distance (mm)')
-	ax.set_zlabel('Energy density')
+	ax.set_zlabel('Excitation level')
 	ax.set_xlim(-l/2/1e-3, L/1e-3+l/2/1e-3)
 	ax.set_ylim(-l/2/1e-3, L/1e-3+l/2/1e-3)
 	ax.w_xaxis.gridlines.set_lw(0.0)
@@ -35,7 +35,7 @@ def update(i, ax, fig):
 
 anim = animation.FuncAnimation(fig, update, fargs=(ax, fig), frames=int(data.shape[0]/10) )
 
-anim.save('W_A.mp4', fps=5, bitrate=-1, codec="libx264")
+anim.save('N_pop.mp4', fps=5, bitrate=-1, codec="libx264")
 
 
 
