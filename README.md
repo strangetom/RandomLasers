@@ -21,8 +21,11 @@ ___________
 * The 2D system has been correct to ensure the pump pulse is only applied along the x-axis. This was done by making the I_G and I_R functions return matrices that were then transposed when all the other matrices were. This appears to have made no change to the original Figure 17 (the one below has been updated anyway).  
 * Animations showing how the 2D system evolves have been created:
  * [Pump energy density](https://github.com/strangetom/RandomLasers/blob/master/.graphs/27Feb/W_G.mp4)  
+![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/27Feb/W_G.gif "Figure 18")    
  * [Excitation level](https://github.com/strangetom/RandomLasers/blob/master/.graphs/27Feb/N_pop.mp4)  
- * [Amplified spontaneous emission](https://github.com/strangetom/RandomLasers/blob/master/.graphs/27Feb/W_A.mp4)  
+![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/27Feb/N_pop.gif "Figure 19") 
+ * [Amplified spontaneous emission](https://github.com/strangetom/RandomLasers/blob/master/.graphs/27Feb/W_A.mp4)
+![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/27Feb/W_A.gif "Figure 20") 
   
 # 26 February  
 * Further corrections made to the 1D CN code, mostly involved with the probe pulse so this hasn't changed any of the figures yet.
