@@ -14,8 +14,16 @@ Masters project modelling random lasers
 **[21 February](#21-february)**  
 **[24 February](#24-february)**  
 **[26 February](#26-february)**  
+**[28 February](#28-february)**  
 
 ___________
+# 28 February  
+* The 2D system has been correct to ensure the pump pulse is only applied along the x-axis. This was done by making the I_G and I_R functions return matrices that were then transposed when all the other matrices were. This appears to have made no change to the original Figure 17 (the one below has been updated anyway).  
+* Animations showing how the 2D system evolves have been created:
+ * [Pump energy density](https://github.com/strangetom/RandomLasers/blob/master/.graphs/27Feb/W_G.mp4)  
+ * [Excitation level](https://github.com/strangetom/RandomLasers/blob/master/.graphs/27Feb/N_pop.mp4)  
+ * [Amplified spontaneous emission](https://github.com/strangetom/RandomLasers/blob/master/.graphs/27Feb/W_A.mp4)  
+  
 # 26 February  
 * Further corrections made to the 1D CN code, mostly involved with the probe pulse so this hasn't changed any of the figures yet.
 * The 2D system code has been written and appears to work successfully. Figure 16 shown below shows the back scattered flux at the x=0 interface from a pump pulse of intensity 4x10<sup>10</sup> Wm<sup>-2</sup> and a thickness of 2 mm. Note that thickness of 1 mm do not seem to allow for laser action even with extremely large pump intensities (~10<sup>16</sup> Wm<sup>-2</sup>)
