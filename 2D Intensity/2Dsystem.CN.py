@@ -54,7 +54,7 @@ I_G_storage = []
 def PUMP_RHS(W_G, N_pop, I_G):
 	"""Calculates the right hand side of the PDE for the pump"""
 	M = np.diagflat([0]+[ dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([0]+[(1. - 2*dt*D/(2*dz**2) - dt/4*sig_abs*v*N_t*(1-N_mid_step[i][i])) for i in range(J-2) ]+[0]) + np.diagflat([ dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
-	return M.dot(W_G) + dt/tau_e *I_G.reshape(J,1)
+	return M.dot(W_G) + dt/tau_e *I_G
 
 def PUMP_LHS(N_mid_step):
 	"""Calculates the left hand side of the PDE for the pump"""
@@ -74,7 +74,7 @@ def ASE_LHS(N_mid_step):
 def PROBE_RHS(W_R, N_pop, I_R):
 	"""Calculates the right hand side of the PDE for the pump"""
 	M = np.diagflat([0]+[ dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([0]+[(1. - 2*dt*D/(2*dz**2) + dt/4*sig_em*v*N_t*N_mid_step[i][i]) for i in range(J-2) ]+[0]) + np.diagflat([ dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
-	return M.dot(W_R) + dt/tau_e *I_R.reshape(J,1)
+	return M.dot(W_R) + dt/tau_e *I_R
 
 def PROBE_LHS(N_mid_step):
 	"""Calculates the left hand side of the PDE for the pump"""
@@ -92,13 +92,13 @@ def I_G(t):
 	"""Calculates the intensity through space at a given time"""
 	I_vec = c*tau_e/l * np.sqrt(4*np.log(2)/np.pi)*np.exp(-kappa_e*z)*np.exp( -4*np.log(2)*(t-t_G-z/c)**2/tau_G**2)
 	I_vec[0]=I_vec[-1] = 0
-	return I_vec
+	return np.zeros((J,J)) + I_vec.reshape(J,1)
 
 def I_R(t):
 	"""Calculates the intensity through space at a given time"""
 	I_vec = I_R0/I_G0*c*tau_e/l * np.sqrt(4*np.log(2)/np.pi)*np.exp(-kappa_e*z)*np.exp( -4*np.log(2)*(t-t_R-z/c)**2/tau_R**2)
 	I_vec[0]=I_vec[-1] = 0
-	return I_vec
+	return np.zeros((J,J)) + I_vec.reshape(J,1)
 
 for timestep in range(N):
 
@@ -144,8 +144,8 @@ for timestep in range(N):
 	A_probe = PROBE_LHS(N_mid_step)
 	A_ASE = ASE_LHS(N_mid_step)
 
-	W_G_next = (np.linalg.solve(A_pump, PUMP_RHS(W_G_mid_step.T, N_mid_step.T, I_G_mid_step) )).T
-	W_R_next = (np.linalg.solve(A_probe, PROBE_RHS(W_R_mid_step.T, N_mid_step.T, I_R_mid_step) )).T
+	W_G_next = (np.linalg.solve(A_pump, PUMP_RHS(W_G_mid_step.T, N_mid_step.T, I_G_mid_step.T) )).T
+	W_R_next = (np.linalg.solve(A_probe, PROBE_RHS(W_R_mid_step.T, N_mid_step.T, I_R_mid_step.T) )).T
 	W_A_next = (np.linalg.solve(A_ASE, ASE_RHS(W_A_mid_step.T, N_mid_step.T) )).T
 
 	"""
