@@ -25,12 +25,18 @@ I_G0 = 4.e10 # average pump intensity
 I_R0 = 0#16.e11 # average probe intensity
 
 #define space parameters
-L = 0.002 # length of medium
-dz = l/2 # space increment
-z = np.arange(-l/2, L+l/2+dz, dz) # vector in space
-z[0] = z[1] # modifiy space vector so pulses don't decay before entering medium
-z[-1] = z[-2] # modifiy space vector so pulses don't decay after exiting medium
-J = z.shape[0] # number of space steps
+X = 0.002 # length of medium
+dx = l/2 # space increment
+x = np.arange(-l/2, X+l/2+dx, dx) # vector in space
+x[0] = x[1] # modifiy space vector so pulses don't decay before entering medium
+x[-1] = x[-2] # modifiy space vector so pulses don't decay after exiting medium
+J = x.shape[0] # number of space steps
+Y = 0.002 # length of medium
+dy = l/2 # space increment
+y = np.arange(-l/2, Y+l/2+dx, dy) # vector in space
+y[0] = y[1] # modifiy space vector so pulses don't decay before entering medium
+y[-1] = y[-2] # modifiy space vector so pulses don't decay after exiting medium
+I = x.shape[0] # number of space steps
 
 #define time parameters
 N = 100000 # number of time steps
@@ -51,22 +57,22 @@ I_G_storage = []
 # function definitions
 def PUMP_RHS(W_G, N_pop, I_G):
 	"""Calculates the right hand side of the PDE for the pump"""
-	M = np.diagflat([0]+[ dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([0]+[(1. - 2*dt*D/(2*dz**2) - dt/4*sig_abs*v*N_t*(1-N_mid_step[i][i])) for i in range(J-2) ]+[0]) + np.diagflat([ dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
+	M = np.diagflat([0]+[ dt*D/(2*dx**2) for i in range(J-2)], -1) + np.diagflat([0]+[(1. - 2*dt*D/(2*dx**2) - dt/4*sig_abs*v*N_t*(1-N_mid_step[i][i])) for i in range(J-2) ]+[0]) + np.diagflat([ dt*D/(2*dx**2) for i in range(J-2)]+[0], 1)
 	return M.dot(W_G) + dt/tau_e *I_G
 
 def PUMP_LHS(N_mid_step):
 	"""Calculates the left hand side of the PDE for the pump"""
-	M = np.diagflat([0]+[ -dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([1]+[ (1. + 2*dt*D/(2*dz**2) + dt/4*sig_abs*v*N_t*(1-N_mid_step[i][i])) for i in range(J-2)]+[1]) + np.diagflat([ -dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
+	M = np.diagflat([0]+[ -dt*D/(2*dx**2) for i in range(J-2)], -1) + np.diagflat([1]+[ (1. + 2*dt*D/(2*dx**2) + dt/4*sig_abs*v*N_t*(1-N_mid_step[i][i])) for i in range(J-2)]+[1]) + np.diagflat([ -dt*D/(2*dx**2) for i in range(J-2)]+[0], 1)
 	return M
 
 def ASE_RHS(W_A, N_mid_step):
 	"""Calculates the right hand side of the PDE for amplified spontaneous emission"""
-	M = np.diagflat([0]+[ dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([0]+[ (1. - 2*dt*D/(2*dz**2) + dt/4*sig_em*v*N_mid_step[i][i]*N_t) for i in range(J-2)]+[0]) + np.diagflat([ dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
+	M = np.diagflat([0]+[ dt*D/(2*dx**2) for i in range(J-2)], -1) + np.diagflat([0]+[ (1. - 2*dt*D/(2*dx**2) + dt/4*sig_em*v*N_mid_step[i][i]*N_t) for i in range(J-2)]+[0]) + np.diagflat([ dt*D/(2*dx**2) for i in range(J-2)]+[0], 1)
 	return M.dot(W_A) + dt*c*N_t*E_A/tau_e/I_G0 * N_mid_step
 
 def ASE_LHS(N_mid_step):
 	"""Calculates the left hand side of the PDE for amplified spontaneous emission"""
-	M = np.diagflat([0]+[ -dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([1]+[ (1. + 2*dt*D/(2*dz**2) - dt/4*sig_em*v*N_mid_step[i][i]*N_t) for i in range(J-2)]+[1]) + np.diagflat([ -dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
+	M = np.diagflat([0]+[ -dt*D/(2*dx**2) for i in range(J-2)], -1) + np.diagflat([1]+[ (1. + 2*dt*D/(2*dx**2) - dt/4*sig_em*v*N_mid_step[i][i]*N_t) for i in range(J-2)]+[1]) + np.diagflat([ -dt*D/(2*dx**2) for i in range(J-2)]+[0], 1)
 	return M
 
 def POP_RHS(N_pop, W_G, W_A):
@@ -78,7 +84,7 @@ def POP_RHS(N_pop, W_G, W_A):
 
 def I_G(t):
 	"""Calculates the intensity through space at a given time"""
-	I_vec = c*tau_e/l * np.sqrt(4*np.log(2)/np.pi)*np.exp(-kappa_e*z)*np.exp( -4*np.log(2)*(t-t_G-z/c)**2/tau_G**2)
+	I_vec = c*tau_e/l * np.sqrt(4*np.log(2)/np.pi)*np.exp(-kappa_e*x)*np.exp( -4*np.log(2)*(t-t_G-x/c)**2/tau_G**2)
 	I_vec[0]=I_vec[-1] = 0
 	return np.zeros((J,J)) + I_vec.reshape(J,1)
 
