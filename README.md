@@ -21,6 +21,9 @@ ___________
 # 3 March  
 * Code updated to correctly calculate 2D diffusion. The transpositions are now done in the correct places, so in the first half step the y derivative is kept constant, and in the second half step the x derivative is kept constant. **This doesn't actually change the results at all.**   
 * An animation showing the time evolution for the excitation level over 500 ns can be found [here](https://github.com/strangetom/RandomLasers/blob/master/.graphs/03Mar/Super%20long%20time/N_pop.mp4). The purpose of this is to show that the population decays with the natural lifetime after lasing action has ended.  
+* Things to do next:
+ * Gut the probe from the code. It isn't used and probably won't be.
+ * Make the 2D geometry variable (i.e. rectangular not just square)
   
 # 28 February  
 * The 2D system has been correct to ensure the pump pulse is only applied along the x-axis. This was done by making the I_G and I_R functions return matrices that were then transposed when all the other matrices were. This appears to have made no change to the original Figure 17 (the one below has been updated anyway).  
