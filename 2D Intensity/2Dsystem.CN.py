@@ -179,3 +179,6 @@ np.savetxt('./Data/L=2/W_A.I=4e10.L=2.txt',W_A_storage[:,int(J/2)], delimiter=',
 np.savetxt('./Data/L=2/N_pop.I=4e10.L=2.txt',N_pop_storage[:,int(J/2)], delimiter=',',newline='\n')
 np.savetxt('./Data/L=2/Flux.I=4e10.L=2.txt',np.sum(Flux,axis=1), delimiter=',',newline='\n')
 """
+np.save('N_pop', N_pop_storage)
+np.save('W_A', W_A_storage)
+np.save('W_G', W_G_storage)
