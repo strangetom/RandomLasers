@@ -81,6 +81,7 @@ def PROBE_LHS(N_mid_step):
 	M = np.diagflat([0]+[ -dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([1]+[ (1. + 2*dt*D/(2*dz**2) - dt/4*sig_em*v*N_t*N_mid_step[i][i]) for i in range(J-2)]+[1]) + np.diagflat([ -dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
 	return M
 
+
 def POP_RHS(N_pop, W_G, W_A, W_R):
 	"""Calculates the right hand side of the PDE for the excited population"""
 	term_1 = dt/2*sig_abs*v*(1-N_pop)*I_G0/(c*E_G) * W_G
@@ -120,15 +121,13 @@ for timestep in range(N):
 	A_probe = PROBE_LHS(N_mid_step)
 	A_ASE = ASE_LHS(N_mid_step)
 
-	W_G_mid_step = np.linalg.solve(A_pump, PUMP_RHS(W_G, N_mid_step, I_G_mid_step) )
-	W_R_mid_step = np.linalg.solve(A_probe, PROBE_RHS(W_R, N_mid_step, I_R_mid_step) )
-	W_A_mid_step = np.linalg.solve(A_ASE, ASE_RHS(W_A, N_mid_step) )
+	W_G_mid_step = np.linalg.solve(A_pump, PUMP_RHS(W_G.T, N_mid_step.T, I_G_mid_step.T) )
+	W_R_mid_step = np.linalg.solve(A_probe, PROBE_RHS(W_R.T, N_mid_step.T, I_R_mid_step.T) )
+	W_A_mid_step = np.linalg.solve(A_ASE, ASE_RHS(W_A.T, N_mid_step.T) )
 
 	"""
 	Then we complete the calculation to get the n+1 step.
 	The x derivative is assumed constant for this step.
-	This means we need to transpose all matrices when passing them into functions 
-	so matrix products work along the correct dimension.
 	"""
 
 	# get intensity spatial profile at n+0.75
@@ -140,13 +139,13 @@ for timestep in range(N):
 	N_mid_step = (N_pop_next + N_pop_next_half)/2
 
 	# Calculate premultiplying matrices for the pump and ASE
-	A_pump = PUMP_LHS(N_mid_step)
-	A_probe = PROBE_LHS(N_mid_step)
-	A_ASE = ASE_LHS(N_mid_step)
+	A_pump = PUMP_LHS(N_mid_step.T)
+	A_probe = PROBE_LHS(N_mid_step.T)
+	A_ASE = ASE_LHS(N_mid_step.T)
 
-	W_G_next = (np.linalg.solve(A_pump, PUMP_RHS(W_G_mid_step.T, N_mid_step.T, I_G_mid_step.T) )).T
-	W_R_next = (np.linalg.solve(A_probe, PROBE_RHS(W_R_mid_step.T, N_mid_step.T, I_R_mid_step.T) )).T
-	W_A_next = (np.linalg.solve(A_ASE, ASE_RHS(W_A_mid_step.T, N_mid_step.T) )).T
+	W_G_next = (np.linalg.solve(A_pump, PUMP_RHS(W_G_mid_step, N_mid_step, I_G_mid_step) ))
+	W_R_next = (np.linalg.solve(A_probe, PROBE_RHS(W_R_mid_step, N_mid_step, I_R_mid_step) ))
+	W_A_next = (np.linalg.solve(A_ASE, ASE_RHS(W_A_mid_step, N_mid_step) ))
 
 	"""
 	Set newly calculated data ready for next loop and save data
@@ -176,7 +175,7 @@ W_A_storage = np.array(W_A_storage)
 W_R_storage = np.array(W_R_storage)
 Flux = (W_A_storage[:,0])
 """
-np.savetxt('./Data/L=1/W_A.I=4e10.L=1.txt',W_A_storage[:,int(J/2)], delimiter=',',newline='\n')
-np.savetxt('./Data/L=1/N_pop.I=4e10.L=1.txt',N_pop_storage[:,int(J/2)], delimiter=',',newline='\n')
-np.savetxt('./Data/L=1/Flux.I=4e10.L=1.txt',np.sum(Flux,axis=1), delimiter=',',newline='\n')
+np.savetxt('./Data/L=2/W_A.I=4e10.L=2.txt',W_A_storage[:,int(J/2)], delimiter=',',newline='\n')
+np.savetxt('./Data/L=2/N_pop.I=4e10.L=2.txt',N_pop_storage[:,int(J/2)], delimiter=',',newline='\n')
+np.savetxt('./Data/L=2/Flux.I=4e10.L=2.txt',np.sum(Flux,axis=1), delimiter=',',newline='\n')
 """
