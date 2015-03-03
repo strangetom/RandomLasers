@@ -24,6 +24,7 @@ ___________
 * Things to do next:
  * Gut the probe from the code. It isn't used and probably won't be.
  * Make the 2D geometry variable (i.e. rectangular not just square)
+  * Doing this with the current matrix methods may be trickier. The system won't be tridiagonal as such. It may be easier to allocate the right hand side as a vector operation. 
   
 # 28 February  
 * The 2D system has been correct to ensure the pump pulse is only applied along the x-axis. This was done by making the I_G and I_R functions return matrices that were then transposed when all the other matrices were. This appears to have made no change to the original Figure 17 (the one below has been updated anyway).  
