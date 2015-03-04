@@ -63,12 +63,14 @@ def PUMP_RHS(W_G, N_pop, I_G, x_deriv_flag):
 		return M.dot(W_G) - dt/4*sig_abs*v*N_t*(1-N_pop)*W_G*F + dt/tau_e *I_G
 	elif ~x_deriv_flag:
 		M = np.diagflat([0]+[ dt*D/(2*dx**2) for i in range(I-2)], -1) + np.diagflat([0]+[(1. - 2*dt*D/(2*dx**2)) for i in range(I-2) ]+[0]) + np.diagflat([ dt*D/(2*dx**2) for i in range(I-2)]+[0], 1)
-		return M.dot(W_G.T) - dt/4*sig_abs*v*N_t*(1-N_pop.T)*W_G.T*F.T + dt/tau_e *I_G.T
+		return ( M.dot(W_G.T) - dt/4*sig_abs*v*N_t*(1-N_pop.T)*W_G.T*F.T + dt/tau_e *I_G.T ).T
+		# This takes the transpose of all the matrices to do the necessary calculations
+		# We transpose it back to the original shape in order to solve the matrix equation. This means the PUMP_LHS equation needn't change greatly.
 
-def PUMP_LHS(N_mid_step):
+def PUMP_LHS(N_pop):
 	"""Calculates the left hand side of the PDE for the pump"""
-	M = np.diagflat([0]+[ -dt*D/(2*dx**2) for i in range(J-2)], -1) + np.diagflat([1]+[ (1. + 2*dt*D/(2*dx**2) + dt/4*sig_abs*v*N_t*(1-N_mid_step[i][i])) for i in range(J-2)]+[1]) + np.diagflat([ -dt*D/(2*dx**2) for i in range(J-2)]+[0], 1)
-	return M
+	M = np.diagflat([0]+[ -dt*D/(2*dx**2) for j in range(J-2)], -1) + np.diagflat([1]+[ (1. + 2*dt*D/(2*dx**2) + dt/4*sig_abs*v*N_t*(1-N_mid_step[i][i])) for j in range(J-2)]+[1]) + np.diagflat([ -dt*D/(2*dx**2) for j in range(J-2)]+[0], 1)
+	return M + dt/4*sig_abs*v*N_t*(1-N_pop)*W_G*F
 
 def ASE_RHS(W_A, N_mid_step):
 	"""Calculates the right hand side of the PDE for amplified spontaneous emission"""
