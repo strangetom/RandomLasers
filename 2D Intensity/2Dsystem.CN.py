@@ -46,7 +46,7 @@ W_A = np.zeros((J,I))
 N_pop = np.zeros((J,I))
 
 # boundary conditions fix
-F = np.vstack( (np.zeros((1,I)), np.ones((J-2,I)), np.zeros((1,I)) )
+F = np.vstack( (np.zeros((1,I)), np.ones((J-2,I)), np.zeros((1,I)) ) )
 F[:,0]=F[:,-1] = 0
 
 # lists for storage
