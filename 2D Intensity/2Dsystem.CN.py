@@ -72,14 +72,14 @@ def PUMP_LHS(N_pop):
 	M = np.diagflat([0]+[ -dt*D/(2*dx**2) for j in range(J-2)], -1) + np.diagflat([1]+[ (1. + 2*dt*D/(2*dx**2) + dt/4*sig_abs*v*N_t*(1-N_mid_step[i][i])) for j in range(J-2)]+[1]) + np.diagflat([ -dt*D/(2*dx**2) for j in range(J-2)]+[0], 1)
 	return M + dt/4*sig_abs*v*N_t*(1-N_pop)*W_G*F
 
-def ASE_RHS(W_A, N_mid_step):
+def ASE_RHS(W_A, N_pop):
 	"""Calculates the right hand side of the PDE for amplified spontaneous emission"""
-	M = np.diagflat([0]+[ dt*D/(2*dx**2) for i in range(J-2)], -1) + np.diagflat([0]+[ (1. - 2*dt*D/(2*dx**2) + dt/4*sig_em*v*N_mid_step[i][i]*N_t) for i in range(J-2)]+[0]) + np.diagflat([ dt*D/(2*dx**2) for i in range(J-2)]+[0], 1)
-	return M.dot(W_A) + dt*c*N_t*E_A/tau_e/I_G0 * N_mid_step
+	M = np.diagflat([0]+[ dt*D/(2*dx**2) for i in range(J-2)], -1) + np.diagflat([0]+[ (1. - 2*dt*D/(2*dx**2) + dt/4*sig_em*v*N_pop[i][i]*N_t) for i in range(J-2)]+[0]) + np.diagflat([ dt*D/(2*dx**2) for i in range(J-2)]+[0], 1)
+	return M.dot(W_A) + dt*c*N_t*E_A/tau_e/I_G0 * N_pop
 
-def ASE_LHS(N_mid_step):
+def ASE_LHS(N_pop):
 	"""Calculates the left hand side of the PDE for amplified spontaneous emission"""
-	M = np.diagflat([0]+[ -dt*D/(2*dx**2) for i in range(J-2)], -1) + np.diagflat([1]+[ (1. + 2*dt*D/(2*dx**2) - dt/4*sig_em*v*N_mid_step[i][i]*N_t) for i in range(J-2)]+[1]) + np.diagflat([ -dt*D/(2*dx**2) for i in range(J-2)]+[0], 1)
+	M = np.diagflat([0]+[ -dt*D/(2*dx**2) for i in range(J-2)], -1) + np.diagflat([1]+[ (1. + 2*dt*D/(2*dx**2) - dt/4*sig_em*v*N_pop[i][i]*N_t) for i in range(J-2)]+[1]) + np.diagflat([ -dt*D/(2*dx**2) for i in range(J-2)]+[0], 1)
 	return M
 
 def POP_RHS(N_pop, W_G, W_A):
