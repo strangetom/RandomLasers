@@ -62,7 +62,7 @@ def PUMP_RHS(W_G, N_pop, I_G, x_deriv_flag):
 		return M.dot(W_G) - dt/4*sig_abs*v*N_t*(1-N_pop)*W_G*F + dt/tau_e *I_G
 	elif ~x_deriv_flag:
 		M = np.diagflat([0]+[ dt*D/(2*dx**2) for i in range(I-2)], -1) + np.diagflat([0]+[(1. - 2*dt*D/(2*dx**2)) for i in range(I-2) ]+[0]) + np.diagflat([ dt*D/(2*dx**2) for i in range(I-2)]+[0], 1)
-		return M.dot(W_G.T) - dt/4*sig_abs*v*N_t*(1-N_pop.T)*W_G.T*F + dt/tau_e *I_G.T
+		return M.dot(W_G.T) - dt/4*sig_abs*v*N_t*(1-N_pop.T)*W_G.T*F.T + dt/tau_e *I_G.T
 
 def PUMP_LHS(N_mid_step):
 	"""Calculates the left hand side of the PDE for the pump"""
