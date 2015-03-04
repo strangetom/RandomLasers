@@ -35,7 +35,7 @@ y[0] = y[1] # modifiy space vector so pulses don't decay before entering medium
 y[-1] = y[-2] # modifiy space vector so pulses don't decay after exiting medium
 I = y.shape[0] # number of space steps
 
-#define time parameters
+# define time parameters
 N = 100000 # number of time steps
 T = 50.e-9 # length of time
 dt = T/N # time increment
@@ -44,6 +44,9 @@ dt = T/N # time increment
 W_G = np.zeros((J,I))
 W_A = np.zeros((J,I))
 N_pop = np.zeros((J,I))
+
+# boundary conditions fix
+F = np.vstack( (np.zeros((1,I)), np.ones((J-2,I)), np.zeros((1,I)) )
 
 # lists for storage
 W_G_storage = []
@@ -57,7 +60,7 @@ def PUMP_RHS(W_G, N_pop, I_G, x_deriv_flag):
 	if x_deriv_flag:
 		M = np.diagflat([0]+[ dt*D/(2*dx**2) for j in range(J-2)], -1) + np.diagflat([0]+[(1. - 2*dt*D/(2*dx**2)) for j in range(J-2) ]+[0]) + np.diagflat([ dt*D/(2*dx**2) for j in range(J-2)]+[0], 1)
 		#boundary conditions need fixing in next line
-		return M.dot(W_G) - dt/4*sig_abs*v*N_t*(1-N_pop)*W_G + dt/tau_e *I_G
+		return M.dot(W_G) - dt/4*sig_abs*v*N_t*(1-N_pop)*W_G*F + dt/tau_e *I_G
 	elif ~x_deriv_flag:
 		#modified semi tridiag matrix to dot with transposed W_G
 
