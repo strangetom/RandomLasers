@@ -20,23 +20,20 @@ D = v*l/3. # diffusion coeffecient
 
 E_G = 6.63e-34*c/532e-9 # energy of pump photons
 E_A = 6.63e-34*c/700e-9 # energy of emitted photons
-E_R = 6.63e-34*c/650e-9 # energy of probe photons
 I_G0 = 4.e10 # average pump intensity
-I_R0 = 0#16.e11 # average probe intensity
 
 #define space parameters
-X = 0.002 # length of medium
+X = 0.002 # length of medium in x direction
 dx = l/2 # space increment
 x = np.arange(-l/2, X+l/2+dx, dx) # vector in space
-x[0] = x[1] # modifiy space vector so pulses don't decay before entering medium
-x[-1] = x[-2] # modifiy space vector so pulses don't decay after exiting medium
+x[0] = x[-1] # modifiy space vector so pulses don't exist outside medium
 J = x.shape[0] # number of space steps
-Y = 0.002 # length of medium
+Y = 0.002 # length of medium in y direction
 dy = l/2 # space increment
 y = np.arange(-l/2, Y+l/2+dx, dy) # vector in space
 y[0] = y[1] # modifiy space vector so pulses don't decay before entering medium
 y[-1] = y[-2] # modifiy space vector so pulses don't decay after exiting medium
-I = x.shape[0] # number of space steps
+I = y.shape[0] # number of space steps
 
 #define time parameters
 N = 100000 # number of time steps
@@ -44,9 +41,9 @@ T = 50.e-9 # length of time
 dt = T/N # time increment
 
 # initial conditions
-W_G = np.zeros((J,J))
-W_A = np.zeros((J,J))
-N_pop = np.zeros((J,J))
+W_G = np.zeros((J,I))
+W_A = np.zeros((J,I))
+N_pop = np.zeros((J,I))
 
 # lists for storage
 W_G_storage = []
@@ -55,10 +52,14 @@ N_pop_storage = []
 I_G_storage = []
 
 # function definitions
-def PUMP_RHS(W_G, N_pop, I_G):
+def PUMP_RHS(W_G, N_pop, I_G, x_deriv_flag):
 	"""Calculates the right hand side of the PDE for the pump"""
-	M = np.diagflat([0]+[ dt*D/(2*dx**2) for i in range(J-2)], -1) + np.diagflat([0]+[(1. - 2*dt*D/(2*dx**2) - dt/4*sig_abs*v*N_t*(1-N_mid_step[i][i])) for i in range(J-2) ]+[0]) + np.diagflat([ dt*D/(2*dx**2) for i in range(J-2)]+[0], 1)
-	return M.dot(W_G) + dt/tau_e *I_G
+	if x_deriv_flag:
+		M = np.diagflat([0]+[ dt*D/(2*dx**2) for j in range(J-2)], -1) + np.diagflat([0]+[(1. - 2*dt*D/(2*dx**2)) for j in range(J-2) ]+[0]) + np.diagflat([ dt*D/(2*dx**2) for j in range(J-2)]+[0], 1)
+		#boundary conditions need fixing in next line
+		return M.dot(W_G) - dt/4*sig_abs*v*N_t*(1-N_pop)*W_G + dt/tau_e *I_G
+	elif ~x_deriv_flag:
+		#modified semi tridiag matrix to dot with transposed W_G
 
 def PUMP_LHS(N_mid_step):
 	"""Calculates the left hand side of the PDE for the pump"""
@@ -84,9 +85,9 @@ def POP_RHS(N_pop, W_G, W_A):
 
 def I_G(t):
 	"""Calculates the intensity through space at a given time"""
-	I_vec = c*tau_e/l * np.sqrt(4*np.log(2)/np.pi)*np.exp(-kappa_e*x)*np.exp( -4*np.log(2)*(t-t_G-x/c)**2/tau_G**2)
+	I_vec = c*tau_e/l * np.sqrt(4*np.log(2)/np.pi)*np.exp(-kappa_e*y)*np.exp( -4*np.log(2)*(t-t_G-y/c)**2/tau_G**2)
 	I_vec[0]=I_vec[-1] = 0
-	return np.zeros((J,J)) + I_vec.reshape(J,1)
+	return np.zeros((J,I)) + I_vec.reshape(J,1)
 
 for timestep in range(N):
 
@@ -157,6 +158,8 @@ np.savetxt('./Data/L=2/W_A.I=4e10.L=2.txt',W_A_storage[:,int(J/2)], delimiter=',
 np.savetxt('./Data/L=2/N_pop.I=4e10.L=2.txt',N_pop_storage[:,int(J/2)], delimiter=',',newline='\n')
 np.savetxt('./Data/L=2/Flux.I=4e10.L=2.txt',np.sum(Flux,axis=1), delimiter=',',newline='\n')
 """
+"""
 np.save('N_pop', N_pop_storage)
 np.save('W_A', W_A_storage)
 np.save('W_G', W_G_storage)
+"""
