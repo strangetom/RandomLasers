@@ -21,7 +21,22 @@ Masters project modelling random lasers
 ___________
 # 5 March  
 * Using the Crank-Nicolson method whilst varying the geometry seems to be very difficult. The stems from the need for the A matrix to contain differnt N_pop values for each column of the W matrix, which isn't mathematically possible without defining a new A matrix for each column. This take a stupid amount of time.  
-* An alternative might be to create a matrix for N<sub>t</sub> and set outer rows of this to 0 in order to change the effective geometry of the sample Updates incoming.  
+* An alternative might be to create a matrix for N<sub>t</sub> and set outer rows of this to 0 in order to change the effective geometry of the sample. Updates incoming.  
+* **Update**: Progress was made by restricting N<sub>t</sub> and modifying the matrices on the RHS and LHS to include zeros in the upper and lower corners when calculating the x derivatives. The idea was that this would restrict gain in these areas. This was successful but the resulting animations show an unusual squareness to the excitation level and energy densities (see [here](https://github.com/strangetom/RandomLasers/blob/master/.graphs/05Mar/N_pop.L%3D3.q%3D15.IG0%3D2e11.mp4) and [here](https://github.com/strangetom/RandomLasers/blob/master/.graphs/05Mar/W_A.L%3D3.q%3D15.IG0%3D2e11.mp4) respectively)  that scaled with the width of the available gain.  
+Why the atoms near the x = 0 and x = L boundaries are not excitated I do not know.  
+* An alternative method that would deal with the issue in the first bullet point of this update would involve remapping the matrix each to a column vector.
+This would require different remappings when calculating x and y derivatives but functions have been written that achieve this (M is the original matrix).  
+```python
+X = M.reshape(M.shape[0]*M.shape[1],1)
+Y = M.T.reshape(M.shape[0]*M.shape[1],1)
+
+def ytox(V):
+	return V.reshape(M.shape[1],M.shape[0]).T.reshape(M.shape[0]*M.shape[1],1)
+
+def xtoy(V):
+	return V.reshape(M.shape[0],M.shape[1]).T.reshape(M.shape[0]*M.shape[1],1)
+```  
+Thus, using this method, a large matrix could be constructed with the correct elements that would allow the system to be solved. In theory.  
   
 # 3 March  
 * Code updated to correctly calculate 2D diffusion. The transpositions are now done in the correct places, so in the first half step the y derivative is kept constant, and in the second half step the x derivative is kept constant. **This doesn't actually change the results at all.**   
