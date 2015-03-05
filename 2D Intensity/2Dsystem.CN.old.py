@@ -54,7 +54,6 @@ I_G_storage = []
 def PUMP_RHS(W_G, N_pop, I_G):
 	"""Calculates the right hand side of the PDE for the pump"""
 	M = np.diagflat([0]+[ dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([0]+[(1. - 2*dt*D/(2*dz**2) - dt/4*sig_abs*v*N_t*(1-N_mid_step[i][i])) for i in range(J-2) ]+[0]) + np.diagflat([ dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
-	print(M.dot(W_G) + dt/tau_e *I_G)
 	return M.dot(W_G) + dt/tau_e *I_G
 
 def PUMP_LHS(N_mid_step):
@@ -102,7 +101,7 @@ def I_R(t):
 	I_vec[0]=I_vec[-1] = 0
 	return np.zeros((J,J)) + I_vec.reshape(J,1)
 
-for timestep in range(1):
+for timestep in range(N):
 
 	"""
 	First we calculate the n+0.5 step.
