@@ -16,8 +16,13 @@ Masters project modelling random lasers
 **[26 February](#26-february)**  
 **[28 February](#28-february)**  
 **[3 March](#3-march)**  
+**[5 March](#5-march)**  
 
 ___________
+# 5 March  
+* Using the Crank-Nicolson method whilst varying the geometry seems to be very difficult. The stems from the need for the A matrix to contain differnt N_pop values for each column of the W matrix, which isn't mathematically possible without defining a new A matrix for each column. This take a stupid amount of time.  
+* An alternative might be to create a matrix for N<sub>t</sub> and set outer rows of this to 0 in order to change the effective geometry of the sample Updates incoming.  
+  
 # 3 March  
 * Code updated to correctly calculate 2D diffusion. The transpositions are now done in the correct places, so in the first half step the y derivative is kept constant, and in the second half step the x derivative is kept constant. **This doesn't actually change the results at all.**   
 * An animation showing the time evolution for the excitation level over 500 ns can be found [here](https://github.com/strangetom/RandomLasers/blob/master/.graphs/03Mar/Super%20long%20time/N_pop.mp4). The purpose of this is to show that the population decays with the natural lifetime after lasing action has ended.  
