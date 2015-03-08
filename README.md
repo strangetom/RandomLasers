@@ -17,8 +17,18 @@ Masters project modelling random lasers
 **[28 February](#28-february)**  
 **[3 March](#3-march)**  
 **[5 March](#5-march)**  
+**[8 March](#8-march)**  
 
 ___________
+# 8 March
+* No progress with the non-square geometry.  
+* Looked at the gain profiles through the centre of the slab, after the pump pulse has ended (at t = 30 ns). Figures 21 and 22 shows the gain profile at different lengths for an incident pulse below threshold (4x10<sup>9</sup> Wm<sup>-2</sup>) and above threshold (4x10<sup>10</sup> Wm<sup>-2</sup>) respectively.  
+![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/08Mar/Gainprofile.4e9Wm-2.png "Figure 21")  
+![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/08Mar/Gainprofile.4e10Wm-2.png "Figure 22")    
+* The small extinction coefficient means that plots look more similar to the double sided pump from the Lagendijk paper, this is a result of the gain in the centre of the medium being depleted faster due to the higher excitation level. 
+*It may be worth comparing one of these plots with a similar one with a higher extinction coefficient to show how it affects the gain profile*  
+  
+
 # 5 March  
 * Using the Crank-Nicolson method whilst varying the geometry seems to be very difficult. The stems from the need for the A matrix to contain differnt N_pop values for each column of the W matrix, which isn't mathematically possible without defining a new A matrix for each column. This take a stupid amount of time.  
 * An alternative might be to create a matrix for N<sub>t</sub> and set outer rows of this to 0 in order to change the effective geometry of the sample. Updates incoming.  
