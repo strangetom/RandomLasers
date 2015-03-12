@@ -18,8 +18,19 @@ Masters project modelling random lasers
 **[3 March](#3-march)**  
 **[5 March](#5-march)**  
 **[8 March](#8-march)**  
+**[10 March](#10-march)**  
+
 
 ___________
+# 10 March
+* Diffusion equation work is now over.
+ * There is some further work that can be done on the laser spiking. Eqn. 16 in the Lagendijk paper gives the frequency of the spikes, which we can use to compare with our results.  
+* **Field equation work has begun.** 
+* Jiang and Soukoulis published a paper in 2000 that simulated random laser odes by coupling Maxwell's equations to the rate equations of electron occupying each energy level (4 level system). They solve this in 1D, and use the time variation of the electric field to get the lasing modes (by doing a Fourier Transform).  
+* The equations themselves may be reasonably simple to implement in code (for 1D), they're mostly first order time derivatives or curls (There's one 2nd order time derivate, but meh). A simple forward Euler method can be used.  
+* The paper states that sources must by introduced to simulate spontaneous emission but doesn't state how. For this we could add the code for a Lorentzian emitter at each space step, then randomly allow them to emit at each time step. This idea needs work.  
+
+
 # 8 March
 * No progress with the non-square geometry.  
 * Looked at the gain profiles through the centre of the slab, after the pump pulse has ended (at t = 30 ns). Figures 21 and 22 shows the gain profile at different lengths for an incident pulse below threshold (4x10<sup>9</sup> Wm<sup>-2</sup>) and above threshold (4x10<sup>10</sup> Wm<sup>-2</sup>) respectively.  
