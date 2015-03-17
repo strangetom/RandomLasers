@@ -69,14 +69,14 @@ for timestep in range(N):
 	P_next = dt**2*gamma_r*e**2/(gamma_c*m_e*(1+dw_a*dt))*(N1 - N2)*E + (1+dt*dw_a-w_a**2*dt**2)/(1+dw_a*dt)*P - P_prev/(1+dw_a*dt)
 
 	# Maxwell
-	E_next = E + P - P_next + dt/(epsilon*dx)*(H-np.roll(H,-1))
-	H_next = H + dt/(mu_0*dx)*(np.roll(E,1)-E)
+	E_next = E + P - P_next + dt/(epsilon*dx)*(H - np.roll(H,-1))
+	H_next = H + dt/(mu_0*dx)*(np.roll(E,1) - E)
 
 	# Population
-	N3_next = (N3 + dt*(P_r*N0 - N3/tau_32) )#*medium_mask
-	N2_next = (N2 + dt*(N3/tau_32 + E/(hbar*w_a)*(P_next-P)/dt - N2/tau_21) )#*medium_mask
-	N1_next = (N1 + dt*(N2/tau_21 - E/(hbar*w_a)*(P_next-P)/dt - N1/tau_10) )#*medium_mask
-	N0_next = (N0 + dt*(N1/tau_10 - P_r*N0) )#*medium_mask
+	N3_next = (N3 + dt*(P_r*N0 - N3/tau_32) )*medium_mask
+	N2_next = (N2 + dt*(N3/tau_32 + E/(hbar*w_a)*(P_next-P)/dt - N2/tau_21) )*medium_mask
+	N1_next = (N1 + dt*(N2/tau_21 - E/(hbar*w_a)*(P_next-P)/dt - N1/tau_10) )*medium_mask
+	N0_next = (N0 + dt*(N1/tau_10 - P_r*N0) )*medium_mask
 
 	P_prev = P
 	P = P_next
@@ -99,11 +99,11 @@ for timestep in range(N):
 
 	print(timestep, end='\r')
 
-"""
+
 P_storage = np.array(P_storage)
 E_storage = np.array(E_storage)
 H_storage = np.array(H_storage)
 N0_storage = np.array(N0_storage)
 N1_storage = np.array(N1_storage)
 N2_storage = np.array(N2_storage)
-N3_storage = np.array(N3_storage)"""
+N3_storage = np.array(N3_storage)
