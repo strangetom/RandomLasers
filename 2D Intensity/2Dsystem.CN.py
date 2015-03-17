@@ -59,10 +59,10 @@ def PUMP_RHS(W_G, N_pop, I_G, y_deriv_constant):
 	"""Calculates the right hand side of the PDE for the pump"""
 	if y_deriv_constant:
 		M = np.diagflat([0]+[ dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([0]+[(1. - 2*dt*D/(2*dz**2)) for i in range(J-2) ]+[0]) + np.diagflat([ dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
-		return M.dot(W_G.T).T - dt/4*sig_abs*v*N_t*(1-N_pop)*W_G*F + dt/tau_e *I_G*F
+		return M.dot(W_G.T).T*F - dt/4*sig_abs*v*N_t*(1-N_pop)*W_G*F + dt/tau_e *I_G*F
 	elif ~y_deriv_constant:
 		M = np.diagflat([0]*(q+1)+[ dt*D/(2*dz**2) for i in range(J-1-2*q)]+(q-1)*[0], -1) + np.diagflat([0]*q+[(1. - 2*dt*D/(2*dz**2)) for i in range(J-2*q) ]+q*[0]) + np.diagflat([0]*(q-1)+[ dt*D/(2*dz**2) for i in range(J-1-2*q)]+(q+1)*[0], 1)
-		return M.dot(W_G) - dt/4*sig_abs*v*N_t*(1-N_pop)*W_G*F + dt/tau_e *I_G*F
+		return M.dot(W_G)*F - dt/4*sig_abs*v*N_t*(1-N_pop)*W_G*F + dt/tau_e *I_G*F
 
 def PUMP_LHS(N_mid_step, y_deriv_constant):
 	"""Calculates the left hand side of the PDE for the pump"""
@@ -77,10 +77,10 @@ def ASE_RHS(W_A, N_mid_step, y_deriv_constant):
 	"""Calculates the right hand side of the PDE for amplified spontaneous emission"""
 	if y_deriv_constant:
 		M = np.diagflat([0]+[ dt*D/(2*dz**2) for i in range(J-2)], -1) + np.diagflat([0]+[ (1. - 2*dt*D/(2*dz**2)) for i in range(J-2)]+[0]) + np.diagflat([ dt*D/(2*dz**2) for i in range(J-2)]+[0], 1)
-		return M.dot(W_A.T).T + dt/4*sig_em*v*N_mid_step*N_t*W_A*F + dt*c*N_t*E_A/tau_e/I_G0 * N_mid_step*F
+		return M.dot(W_A.T).T*F + dt/4*sig_em*v*N_mid_step*N_t*W_A*F + dt*c*N_t*E_A/tau_e/I_G0 * N_mid_step*F
 	elif ~y_deriv_constant:
 		M = np.diagflat([0]*(q+1)+[ dt*D/(2*dz**2) for i in range(J-1-2*q)]+(q-1)*[0], -1) + np.diagflat([0]*q+[ (1. - 2*dt*D/(2*dz**2)) for i in range(J-2*q)]+q*[0]) + np.diagflat([0]*(q-1)+[ dt*D/(2*dz**2) for i in range(J-1-2*q)]+(q+1)*[0], 1)
-		return M.dot(W_A) + dt/4*sig_em*v*N_mid_step*N_t*W_A*F + dt*c*N_t*E_A/tau_e/I_G0 * N_mid_step*F
+		return M.dot(W_A)*F + dt/4*sig_em*v*N_mid_step*N_t*W_A*F + dt*c*N_t*E_A/tau_e/I_G0 * N_mid_step*F
 
 def ASE_LHS(N_mid_step, y_deriv_constant):
 	"""Calculates the left hand side of the PDE for amplified spontaneous emission"""

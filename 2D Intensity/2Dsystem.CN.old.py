@@ -11,7 +11,7 @@ kappa_e = 5.e-4 # extinction coefficient (see spec sheet in shared folder)
 tau_G = 14.e-9 # pump pulse FWHM
 tau_R = 14.e-9 # probe pulse FWHM
 t_G = 15.e-9 # time of maxima of pump pulse 
-t_R = 15.e-9 # time of maxima of probe pulse 
+t_R = 25.e-9 # time of maxima of probe pulse 
 illum_area = np.pi*(2.e-3)**2 # illumation area
 n = 1.35 # average refractive index of medium
 c = spc.c/n # speed of light in medium
@@ -21,8 +21,8 @@ D = v*l/3. # diffusion coeffecient
 E_G = 6.63e-34*c/532e-9 # energy of pump photons
 E_A = 6.63e-34*c/700e-9 # energy of emitted photons
 E_R = 6.63e-34*c/650e-9 # energy of probe photons
-I_G0 = 4.e10 # average pump intensity
-I_R0 = 0#16.e11 # average probe intensity
+I_G0 = 4.e9 # average pump intensity
+I_R0 = 0#8.e9 # average probe intensity
 
 #define space parameters
 L = 0.002 # length of medium
@@ -174,11 +174,12 @@ W_G_storage = np.array(W_G_storage)
 W_A_storage = np.array(W_A_storage)
 W_R_storage = np.array(W_R_storage)
 Flux = (W_A_storage[:,0])
-"""
-np.savetxt('./Data/L=2/W_A.I=4e10.L=2.txt',W_A_storage[:,int(J/2)], delimiter=',',newline='\n')
-np.savetxt('./Data/L=2/N_pop.I=4e10.L=2.txt',N_pop_storage[:,int(J/2)], delimiter=',',newline='\n')
-np.savetxt('./Data/L=2/Flux.I=4e10.L=2.txt',np.sum(Flux,axis=1), delimiter=',',newline='\n')
+
+#np.savetxt('./Data/W_A.I=4e10.L=2.txt',W_A_storage[:,int(J/2)], delimiter=',',newline='\n')
+np.savetxt('./Data/N_pop.I=4e9.L=2.txt',N_pop_storage[:,int(J/2)], delimiter=',',newline='\n')
+#np.savetxt('./Data/Flux.I=4e10.L=2.txt',np.sum(Flux,axis=1), delimiter=',',newline='\n')
 """
 np.save('N_pop', N_pop_storage)
 np.save('W_A', W_A_storage)
 np.save('W_G', W_G_storage)
+"""
