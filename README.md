@@ -19,9 +19,18 @@ Masters project modelling random lasers
 **[5 March](#5-march)**  
 **[8 March](#8-march)**  
 **[10 March](#10-march)**  
+**[17 March](#17-march)**  
 
 
 ___________
+# 17 March  
+* Initial work on the simulations has begun. There are a number of points that need to be clarified.  
+ * Absorbing boundary conditions at the edges (Liao method?)  
+ * 300 nm leads at each side - are these just inacive regions for the boundary conditions?  
+ * Need a more robust way to only make the population equations evaluate at the correct points in the medium. At the moment a binary mask is used, but I'm not sure forcing the population to 0 in the scattering regions is the correct way to go about it.  
+* The Jiang paper mentions adding sources of spontaneous emission spread homogenously throughout the medium. A later paper by Sebbah does similar work in 2D, but does not include these sources. Whether or not these are required and how to implement them is unclear.  
+
+
 # 10 March
 * Diffusion equation work is now over.
  * There is some further work that can be done on the laser spiking. Eqn. 16 in the Lagendijk paper gives the frequency of the spikes, which we can use to compare with our results.  
