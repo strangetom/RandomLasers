@@ -29,7 +29,7 @@ dt = 1e-17 # time step
 N = int(T/dt)
 
 # Generate medium
-epsilon = [] # vector to contain permittivity at each node
+epsilon = [4*epsilon_0]*int(300e-9/dx) # vector to contain permittivity at each node
 W = 1.4 # strength of randomness
 b = int(180e-9/dx)
 number_of_cells = 0
@@ -38,8 +38,10 @@ while len(epsilon) < L/dx:
 	new_region = [epsilon_0]*a + [4*epsilon_0]*b
 	epsilon.extend(new_region)
 	number_of_cells += 1
+epsilon.extend([4*epsilon_0]*int(300e-9/dx))
 epsilon = np.array(epsilon)
 medium_mask = np.int32(ma.masked_greater(epsilon, epsilon_0).filled(0)/(epsilon_0))
+
 
 # Set actual length of medium
 I = epsilon.shape[0]
