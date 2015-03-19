@@ -20,9 +20,17 @@ Masters project modelling random lasers
 **[8 March](#8-march)**  
 **[10 March](#10-march)**  
 **[17 March](#17-march)**  
+**[19 March](#19-march)**  
 
 
 ___________
+# 19 March  
+* Writing the code utilising for loops is a lot slower than using broadcasting of numpy arrays, however it does work without overflowing and it becomes simpler to add boundary conditions.  
+* The @jit decorator from numba brings some tremendous performance increases, so yay.  
+* The code doesn't seem to produce the expected results when its pumped uniformly with the P<sub>r</sub> term in the rate equations. It looks like it may be necessary to add emitters to the fields.  
+* N2 and N1 never seem to change from 0 (the inital condition) -> need to investigate why.  
+
+
 # 17 March  
 * Initial work on the simulations has begun. There are a number of points that need to be clarified.  
  * Absorbing boundary conditions at the edges (Liao method?)  
