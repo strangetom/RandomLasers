@@ -26,7 +26,7 @@ gamma_c = spc.e**2*w_a**2/(spc.m_e*6*np.pi*spc.epsilon_0*spc.c**3)
 dw_a = 1/tau_21 + 2/T_2
 
 # Simulation parameters
-L = 5e-6 # approx. length of medium
+L = 20e-6 # approx. length of medium
 dx = 1e-9 # space step
 T = 7e-10 # time for simulation
 dt = dx/c # time step
@@ -74,7 +74,7 @@ N3_storage = []
 @nb.jit(nopython=True)
 def update_P(P, P_prev, E, N1, N2):
 	for position in range(1, E.shape[0], 1):
-		P[position] = dt**2*gamma_r*e**2/(gamma_c*m_e*(1+dw_a*dt))*(N1[position]-N2[position])*E[position] + (1+dt*dw_a-w_a**2*dt**2)/(1+dw_a*dt)*P[position] - P_prev[position]/(1+dw_a*dt)
+		P[position] = dt**2*gamma_r*e**2/(gamma_c*m_e*(1+dw_a*dt))*(N1[position]-N2[position])*E[position] + (2-w_a**2*dt**2)/(1+dw_a*dt)*P[position] - (dw_a*dt-1)/(1+dw_a*dt)*P_prev[position]
 	return P
 
 @nb.jit(nopython=True)
@@ -84,13 +84,13 @@ def update_H(E, H):
 	return H
 
 @nb.jit(nopython=True)
-def update_E(E, H, P, P_prev, medium_mask):
+def update_E(E, H, P, P_prev, medium_mask, emitter, location):
 	for position in range(1, E.shape[0], 1):
 		if medium_mask[position] > 1:
 			E[position] = E[position] + dt/(epsilon_0*dx)*(H[position]-H[position-1]) + (P_prev[position] - P[position])/epsilon_0
 		else:
 			E[position] = E[position] + dt/(4*epsilon_0*dx)*(H[position]-H[position-1]) + (P_prev[position] - P[position])/(4*epsilon_0)
-	E[int(E.shape[0]/2)] += 1e15*np.exp(-(timestep)**2 /(1e-10)**2.)
+	E[location] += emitter
 	return E
 
 @nb.jit(nopython=True)
@@ -108,8 +108,16 @@ for timestep in range(300000):
 	P_copy = P.copy()
 	P = update_P(P, P_prev, E, N1, N2)
 	P_prev = P_copy
+
+	if np.random.rand() > 0.99999:
+		emitter_location = int(np.random.rand()*int(I))
+		emitter = w_a+np.random.standard_cauchy()
+	else:
+		emitter_location = 0
+		emitter = 0
+
 	H = update_H(E, H)
-	E = update_E(E, H, P, P_prev, medium_mask)
+	E = update_E(E, H, P, P_prev, medium_mask, emitter, emitter_location)
 
 	N0, N1, N2, N3 = update_N(N0, N1, N2, N3, medium_mask, E, P, P_prev)
 
