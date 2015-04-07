@@ -86,22 +86,22 @@ def update_H(E, H):
 	return H
 
 @nb.jit(nopython=True)
-def update_E(E, H, P, P_prev, medium_mask):
+def update_E(E, H, P_next, P, medium_mask):
 	for position in range(1, E.shape[0], 1):
 		if medium_mask[position] > 1:
-			E[position] = E[position] + dt/(epsilon_0*dx)*(H[position]-H[position-1]) + (P_prev[position] - P[position])/epsilon_0
+			E[position] = E[position] + dt/(epsilon_0*dx)*(H[position]-H[position-1]) + (P[position] - P_next[position])/epsilon_0
 		else:
-			E[position] = E[position] + dt/(4*epsilon_0*dx)*(H[position]-H[position-1]) + (P_prev[position] - P[position])/(4*epsilon_0)
+			E[position] = E[position] + dt/(4*epsilon_0*dx)*(H[position]-H[position-1]) + (P[position] - P_next[position])/(4*epsilon_0)
 	E[0] = E[1]
 	return E
 
 @nb.jit(nopython=True)
-def update_N(N0, N1, N2, N3, medium_mask, E, P, P_prev):
+def update_N(N0, N1, N2, N3, E, P_next, P, medium_mask):
 	for position in range(1, N0.shape[0], 1):
 		if medium_mask[position] > 0:
 			N3[position] = N3[position] + dt*(P_r*N0[position]-N3[position]/tau_32)
-			N2[position] = N2[position] + E[position]/(hbar*w_a)*( (P[position]-P_prev[position])/dt - N2[position]/tau_21)
-			N1[position] = N1[position] - E[position]/(hbar*w_a)*( (P[position]-P_prev[position])/dt - N1[position]/tau_10)
+			N2[position] = N2[position] + E[position]/(hbar*w_a)*( (P_next[position]-P[position])/dt - N2[position]/tau_21)
+			N1[position] = N1[position] - E[position]/(hbar*w_a)*( (P_next[position]-P[position])/dt - N1[position]/tau_10)
 			N0[position] = N0[position] + dt*(N1[position]/tau_10 - P_r*N0[position])
 	return N0, N1, N2, N3
 
@@ -110,11 +110,11 @@ for timestep in range(300000):
 	P_next = update_P(P, P_prev, E, N1, N2)
 
 	H_next = update_H(E, H)
-	E_next = update_E(E, H, P, P_prev, medium_mask)
+	E_next = update_E(E, H, P_next, P, medium_mask)
 
-	N0_next, N1_next, N2_next, N3_next = update_N(N0, N1, N2, N3, medium_mask, E, P, P_prev)
+	N0_next, N1_next, N2_next, N3_next = update_N(N0, N1, N2, N3, E, P_next, P, medium_mask,)
 
-	p_prev = P
+	P_prev = P
 	P = P_next
 	E = E_next
 	H = H_next
