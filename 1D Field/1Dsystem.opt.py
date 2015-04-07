@@ -3,14 +3,12 @@ from numpy import ma
 import numbapro as nb
 from scipy import constants as spc
 
-
 # Define constants
 w_a = 2*np.pi*6e14 # centre frequency
 tau_32 = 1e-13 # lifetime of level 3
 tau_21 = 1e-9 # lifetime of level 2
 tau_10 = 1e-11 # lifetime of level 1
 T_2 = 2.18e-14 # mean time between dephasing events, collision time
-P_r = 1e7 # pumping rate
 
 # Fundamental constants
 hbar = spc.hbar
@@ -86,12 +84,9 @@ def update_H(E, H):
 	return H
 
 @nb.jit(nopython=True)
-def update_E(E, H, P_next, P, medium_mask):
+def update_E(E, H, P_next, P):
 	for position in range(1, E.shape[0], 1):
-		if medium_mask[position] > 1:
-			E[position] = E[position] + dt/(epsilon_0*dx)*(H[position]-H[position-1]) + (P[position] - P_next[position])/epsilon_0
-		else:
-			E[position] = E[position] + dt/(4*epsilon_0*dx)*(H[position]-H[position-1]) + (P[position] - P_next[position])/(4*epsilon_0)
+		E[position] = E[position] + dt/(epsilon[position]*dx)*(H[position]-H[position-1]) + (P[position] - P_next[position])/epsilon[position]
 	E[0] = E[1]
 	return E
 
@@ -107,10 +102,15 @@ def update_N(N0, N1, N2, N3, E, P_next, P, medium_mask):
 
 for timestep in range(300000):
 
+	if timestep*dt < 1e16:
+		P_r = 1e17 # pumping rate
+	else:
+		P_r = 0
+
 	P_next = update_P(P, P_prev, E, N1, N2)
 
 	H_next = update_H(E, H)
-	E_next = update_E(E, H, P_next, P, medium_mask)
+	E_next = update_E(E, H, P_next, P)
 
 	N0_next, N1_next, N2_next, N3_next = update_N(N0, N1, N2, N3, E, P_next, P, medium_mask,)
 
