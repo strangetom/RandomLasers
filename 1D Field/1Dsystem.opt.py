@@ -75,22 +75,24 @@ N3_storage = []
 def update_P(P, P_prev, E, N1, N2):
 	for position in range(1, E.shape[0], 1):
 		P[position] = dt**2*gamma_r*e**2/(gamma_c*m_e*(1+dw_a*dt))*(N1[position]-N2[position])*E[position] + (2-w_a**2*dt**2)/(1+dw_a*dt)*P[position] - (dw_a*dt-1)/(1+dw_a*dt)*P_prev[position]
+	P[0] = P[1]
 	return P
 
 @nb.jit(nopython=True)
 def update_H(E, H):
 	for position in range(1, H.shape[0]-1, 1):
 		H[position] = H[position] + dt/(mu_0*dx)*(E[position+1]-E[position])
+	H[-1] = H[-2]
 	return H
 
 @nb.jit(nopython=True)
-def update_E(E, H, P, P_prev, medium_mask, emitter, location):
+def update_E(E, H, P, P_prev, medium_mask):
 	for position in range(1, E.shape[0], 1):
 		if medium_mask[position] > 1:
 			E[position] = E[position] + dt/(epsilon_0*dx)*(H[position]-H[position-1]) + (P_prev[position] - P[position])/epsilon_0
 		else:
 			E[position] = E[position] + dt/(4*epsilon_0*dx)*(H[position]-H[position-1]) + (P_prev[position] - P[position])/(4*epsilon_0)
-	E[location] += emitter
+	E[0] = E[1]
 	return E
 
 @nb.jit(nopython=True)
@@ -105,23 +107,24 @@ def update_N(N0, N1, N2, N3, medium_mask, E, P, P_prev):
 
 for timestep in range(300000):
 
-	P_copy = P.copy()
-	P = update_P(P, P_prev, E, N1, N2)
+	P_next = update_P(P, P_prev, E, N1, N2)
 	P_prev = P_copy
 
-	if np.random.rand() > 0.99999:
-		emitter_location = int(np.random.rand()*int(I))
-		emitter = w_a+np.random.standard_cauchy()
-	else:
-		emitter_location = 0
-		emitter = 0
+	H_next = update_H(E, H)
+	E_next = update_E(E, H, P, P_prev, medium_mask)
 
-	H = update_H(E, H)
-	E = update_E(E, H, P, P_prev, medium_mask, emitter, emitter_location)
+	N0_next, N1_next, N2_next, N3_next = update_N(N0, N1, N2, N3, medium_mask, E, P, P_prev)
 
-	N0, N1, N2, N3 = update_N(N0, N1, N2, N3, medium_mask, E, P, P_prev)
+	p_prev = P
+	P = P_next
+	E = E_next
+	H = H_next
+	N0 = N0_next
+	N1 = N1_next
+	N2 = N2_next
+	N3 = N3_next
 
-	if timestep % 100 == 0:
+	if timestep % 500 == 0:
 		#store data in storage list
 		P_storage.append(P)
 		E_storage.append(E)
