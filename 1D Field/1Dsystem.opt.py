@@ -108,7 +108,6 @@ def update_N(N0, N1, N2, N3, medium_mask, E, P, P_prev):
 for timestep in range(300000):
 
 	P_next = update_P(P, P_prev, E, N1, N2)
-	P_prev = P_copy
 
 	H_next = update_H(E, H)
 	E_next = update_E(E, H, P, P_prev, medium_mask)
