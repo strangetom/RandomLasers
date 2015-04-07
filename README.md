@@ -31,6 +31,7 @@ Time to do more work on the field equation stuff.
 * Variable naming conventions have been cleaned up and clarified in the main for loop for time progression.  
 * It doesn't yet work... Basically nothing but a load of 0s comes out when run for 300,000 iterations (10<sup>-12</sup>s). The cause of this may be the lack of emitters, however the Sebbah and Vanneste paper does not use emitters and still manages to get results. They pump the four level system uniformly over the whole system. The numbers they use are missing (e.g, the pump rate), it would be kinda handy to have those.  
 More updates to come later today. Probably. 
+* The pump should not happen continuously I think. It should happen for a short period of time only at the beginning of the simulation (maybe only for the first iteration, or maybe as a gaussian pulse of short, say 10<sup>-16</sup> s, duration). Needs investigating.  
 
 
 # 19 March  
