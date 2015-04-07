@@ -21,9 +21,18 @@ Masters project modelling random lasers
 **[10 March](#10-march)**  
 **[17 March](#17-march)**  
 **[19 March](#19-march)**  
+**[7 April](#7-april)**  
 
 
 ___________
+# 7 April  
+Time to do more work on the field equation stuff.
+* The polarization equation has been updated so the 1<sup>st</sup> order time derivative uses P<sup>n+1</sup> and P<sup>n-1</sup> so it's consistent with the 2<sup>nd</sup> order time derivative.  
+* Variable naming conventions have been cleaned up and clarified in the main for loop for time progression.  
+* It doesn't yet work... Basically nothing but a load of 0s comes out when run for 300,000 iterations (10<sup>-12</sup>s). The cause of this may be the lack of emitters, however the Sebbah and Vanneste paper does not use emitters and still manages to get results. They pump the four level system uniformly over the whole system. The numbers they use are missing (e.g, the pump rate), it would be kinda handy to have those.  
+More updates to come later today. Probably. 
+
+
 # 19 March  
 * Writing the code utilising for loops is a lot slower than using broadcasting of numpy arrays, however it does work without overflowing and it becomes simpler to add boundary conditions.  
 * The @jit decorator from numba brings some tremendous performance increases, so yay.  
