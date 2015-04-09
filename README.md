@@ -22,9 +22,14 @@ Masters project modelling random lasers
 **[17 March](#17-march)**  
 **[19 March](#19-march)**  
 **[7 April](#7-april)**  
+**[9 April](#9-april)**  
 
 
 ___________
+# 9 April  
+* Well here's something interesting: with the population equations corrected, it's super obvious that E, H and P will never deviate from 0 unless there's some kind of pump to E and sometime. This is what Jiang and Soukoulis are talking about in there paper when they mention homogenously distributed sources to stimulate spontaneous emission.  
+
+
 # 7 April  
 Time to do more work on the field equation stuff.
 * The polarization equation has been updated so the 1<sup>st</sup> order time derivative uses P<sup>n+1</sup> and P<sup>n-1</sup> so it's consistent with the 2<sup>nd</sup> order time derivative.  
