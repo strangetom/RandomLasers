@@ -51,15 +51,17 @@ I = epsilon.shape[0]
 actual_L = I*dx
 
 # Find the position of 20 sources uniformly(-ish) distributed in the gain medium
-source_position = 300 + np.random.randint(0,20)
+source_position = 300 + np.random.randint(0,20) # initial attempt to position the first source
 sources = []
 try:
 	while True:
 		while medium_mask[source_position] != 1:
+			# if the source location isn't in the gain medium, move it 50*dx onwards
 			source_position += 50
-		sources.append(source_position)
-		source_position += int(I/30)
+		sources.append(source_position) # save location
+		source_position += int(I/30) # move forward by some amount that would allow for uniformly spaced sources
 		if source_position > I-300:
+			# when the source position is in the last 300nm, force it outside the medium to trigger IndexError
 			source_position += 300
 except IndexError:
 	sources = np.array(sources)
