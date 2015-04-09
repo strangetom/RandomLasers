@@ -9,6 +9,7 @@ tau_32 = 1e-13 # lifetime of level 3
 tau_21 = 1e-9 # lifetime of level 2
 tau_10 = 1e-11 # lifetime of level 1
 T_2 = 2.18e-14 # mean time between dephasing events, collision time
+P_r = 1e7 # pumping rate
 
 # Fundamental constants
 hbar = spc.hbar
@@ -26,21 +27,21 @@ dw_a = 1/tau_21 + 2/T_2
 # Simulation parameters
 L = 20e-6 # approx. length of medium
 dx = 1e-9 # space step
-T = 7e-10 # time for simulation
+T = 7e-12 # time for simulation
 dt = dx/c # time step
 N = int(T/dt)
 
-# Generate medium
-epsilon = [4*epsilon_0]*int(300e-9/dx) # vector to contain permittivity at each node
+# Generate medium: 4*epsilon_0 is scattering, epsilon_0 is gain
+epsilon = [epsilon_0]*int(300e-9/dx) # vector to contain permittivity at each node
 W = 1.4 # strength of randomness
 b = int(180e-9/dx)
 number_of_cells = 0
 while len(epsilon) < L/dx:
-	a = int(300e-9*(1+W*np.random.rand()-0.5)/dx)
+	a = int(300e-9*(1+W*(np.random.rand()-0.5))/dx)
 	new_region = [epsilon_0]*a + [4*epsilon_0]*b
 	epsilon.extend(new_region)
 	number_of_cells += 1
-epsilon.extend([4*epsilon_0]*int(300e-9/dx))
+epsilon.extend([epsilon_0]*int(300e-9/dx))
 epsilon = np.array(epsilon)
 # gain medium == 1, scattering medium == 0
 medium_mask = np.int32(ma.masked_greater(epsilon, epsilon_0).filled(0)/(epsilon_0))
@@ -48,6 +49,7 @@ medium_mask = np.int32(ma.masked_greater(epsilon, epsilon_0).filled(0)/(epsilon_
 # Set actual length of medium
 I = epsilon.shape[0]
 actual_L = I*dx
+
 
 # Initial conditions
 P = np.zeros(I)
@@ -71,8 +73,8 @@ N3_storage = []
 # Function definitions
 @nb.jit(nopython=True)
 def update_P(P, P_prev, E, N1, N2):
-	for position in range(1, E.shape[0], 1):
-		P[position] = dt**2*gamma_r*e**2/(gamma_c*m_e*(1+dw_a*dt))*(N1[position]-N2[position])*E[position] + (2-w_a**2*dt**2)/(1+dw_a*dt)*P[position] - (dw_a*dt-1)/(1+dw_a*dt)*P_prev[position]
+	for position in range(1, P.shape[0], 1):
+		P[position] = dt**2*gamma_r*e**2/(gamma_c*m_e*(1+dw_a*dt/2))*(N1[position]-N2[position])*E[position] + (2-w_a**2*dt**2)/(1+dw_a*dt/2)*P[position] - (dw_a*dt/2-1)/(1+dw_a*dt/2)*P_prev[position]
 	P[0] = P[1]
 	return P
 
@@ -95,17 +97,13 @@ def update_N(N0, N1, N2, N3, E, P_next, P, medium_mask):
 	for position in range(1, N0.shape[0], 1):
 		if medium_mask[position] > 0:
 			N3[position] = N3[position] + dt*(P_r*N0[position]-N3[position]/tau_32)
-			N2[position] = N2[position] + E[position]/(hbar*w_a)*( (P_next[position]-P[position])/dt - N2[position]/tau_21)
-			N1[position] = N1[position] - E[position]/(hbar*w_a)*( (P_next[position]-P[position])/dt - N1[position]/tau_10)
+			N2[position] = N2[position] + dt*(N3[position]/tau_32 + E[position]/(hbar*w_a)*( (P_next[position]-P[position])/dt - N2[position]/tau_21))
+			N1[position] = N1[position] + dt*(N2[position]/tau_21 - E[position]/(hbar*w_a)*( (P_next[position]-P[position])/dt - N1[position]/tau_10))
 			N0[position] = N0[position] + dt*(N1[position]/tau_10 - P_r*N0[position])
 	return N0, N1, N2, N3
 
-for timestep in range(300000):
 
-	if timestep*dt < 1e16:
-		P_r = 1e17 # pumping rate
-	else:
-		P_r = 0
+for timestep in range(300000):
 
 	P_next = update_P(P, P_prev, E, N1, N2)
 
@@ -123,7 +121,7 @@ for timestep in range(300000):
 	N2 = N2_next
 	N3 = N3_next
 
-	if timestep % 500 == 0:
+	if timestep % 100 == 0:
 		#store data in storage list
 		P_storage.append(P)
 		E_storage.append(E)
