@@ -28,6 +28,8 @@ Masters project modelling random lasers
 ___________
 # 9 April  
 * Well here's something interesting: with the population equations corrected, it's super obvious that E, H and P will never deviate from 0 unless there's some kind of pump to E and sometime. This is what Jiang and Soukoulis are talking about in there paper when they mention homogenously distributed sources to stimulate spontaneous emission.  
+* Code has been added that generates the positions of around 25 sources. These are roughly uniformly distributed in the medium (but they can only occur in the gain medium). 
+* Jiang and Soukoulis' paper says these sources should generate waves of a Lorentzian frequency distribution centred around w<sub>a</sub> with an amplitude dependent on N<sub>2</sub>.
 
 
 # 7 April  
