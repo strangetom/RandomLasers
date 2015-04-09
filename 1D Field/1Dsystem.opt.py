@@ -50,6 +50,22 @@ medium_mask = np.int32(ma.masked_greater(epsilon, epsilon_0).filled(0)/(epsilon_
 I = epsilon.shape[0]
 actual_L = I*dx
 
+# Find the position of 20 sources uniformly(-ish) distributed in the gain medium
+source_position = 300 + np.random.randint(0,20)
+sources = []
+try:
+	while True:
+		while medium_mask[source_position] != 1:
+			source_position += 50
+		sources.append(source_position)
+		source_position += int(I/30)
+		if source_position > I-300:
+			source_position += 300
+except IndexError:
+	sources = np.array(sources)
+	number_of_sources = sources.shape[0]
+
+
 
 # Initial conditions
 P = np.zeros(I)
