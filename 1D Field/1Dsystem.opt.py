@@ -98,16 +98,18 @@ def update_P(P, P_prev, E, N1, N2):
 
 @nb.jit(nopython=True)
 def update_H(E, H):
-	for position in range(1, H.shape[0]-1, 1):
+	for position in range(0, H.shape[0]-1, 1):
 		H[position] = H[position] + dt/(mu_0*dx)*(E[position+1]-E[position])
-	H[-1] = H[-2]
+	#ABCs
+	E[0] = E[1]
 	return H
 
 @nb.jit(nopython=True)
 def update_E(E, H, P_next, P):
 	for position in range(1, E.shape[0], 1):
 		E[position] = E[position] + dt/(epsilon[position]*dx)*(H[position]-H[position-1]) + (P[position] - P_next[position])/epsilon[position]
-	E[0] = E[1]
+	#ABCs
+	H[-1] = H[-2]
 	return E
 
 @nb.jit(nopython=True)
