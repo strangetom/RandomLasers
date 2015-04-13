@@ -8,6 +8,16 @@ plt.close('all')
 npop = np.load('N_pop_storage.npy')
 wa = np.load('W_A_storage.npy')
 
+# some colours
+tableau20 = [(31, 119, 180), (174, 199, 232), (255, 127, 14), (255, 187, 120),  
+             (44, 160, 44), (152, 223, 138), (214, 39, 40), (255, 152, 150),  
+             (148, 103, 189), (197, 176, 213), (140, 86, 75), (196, 156, 148),  
+             (227, 119, 194), (247, 182, 210), (127, 127, 127), (199, 199, 199),  
+             (188, 189, 34), (219, 219, 141), (23, 190, 207), (158, 218, 229)] 
+for i in range(len(tableau20)):  
+    r, g, b = tableau20[i]  
+    tableau20[i] = (r / 255., g / 255., b / 255.)          
+
 # spatial grid
 l = 100.e-6
 L = 0.003  # length of slap
@@ -24,19 +34,23 @@ time = dt*100*np.arange(0, 1000, 1)
 # take snapshots at 12.9ns (max) and at 14.5ns (min) 
 # 20 rows = 1 ns
 npop12_2 = npop[244, 32][1:-1]
-npop12_6 = npop[252, 32][1:-1]
-npop13_0 = npop[260, 32][1:-1]
+npop12_5 = npop[251, 32][1:-1]
+npop12_9 = npop[258, 32][1:-1]
+npop13_2 = npop[265, 32][1:-1]
 npop13_5 = npop[271, 32][1:-1]
 
-snapshots = [npop12_2, npop12_6, npop13_0, npop13_5]
-snapshot_labels = [r"$12.2\/ns$", r"$12.6\/ns$", r"$13.0\/ns$", r"$13.5\/ns$"]
+snapshots = [npop12_2, npop12_5, npop12_9, npop13_2, npop13_5]
+snapshot_labels = [r"$12.2\/ns$", r"$12.5\/ns$", r"$12.9\/ns$", r"$13.2\/ns$", r"$13.5\/ns$"]
+greys = ['0.3', '0.5', '0.7']
 
 fig, ax = plt.subplots(figsize=(12,6))
 for i, snapshot in enumerate(snapshots):
-	if i == 0 or i == 3:
-		ax.plot(X, snapshot, color=plt.cm.RdBu(20+150*i), linewidth=1.5, label=snapshot_labels[i])
+	if i == 0:
+		ax.plot(X, snapshot, color=tableau20[0], linewidth=1.5, label=snapshot_labels[i])
+	elif i == 4:
+		ax.plot(X, snapshot, color=tableau20[6], linewidth=1.5, label=snapshot_labels[i])
 	else:
-		ax.plot(X, snapshot, color='0.65', linewidth=1.5, label=snapshot_labels[i])
+		ax.plot(X, snapshot, color=greys[i-1], linewidth=1.5, label=snapshot_labels[i])
 
 ax.set_xlim((0.25, 2.75))
 ax.set_ylim((0.1, 0.2))
@@ -44,7 +58,8 @@ ax.set_ylabel('Excitation level', fontsize=16)
 ax.set_xlabel('Position inside medium (mm)', fontsize=16)
 ax.set_xticks(np.arange(0.25, 3., 0.25))
 ax.set_yticks(np.arange(0.11, 0.21, 0.01))
-ax.legend()
+lg = ax.legend()
+lg.draw_frame(False)
 ax.xaxis.set_ticks_position('bottom')
 ax.yaxis.set_ticks_position('left')
 
