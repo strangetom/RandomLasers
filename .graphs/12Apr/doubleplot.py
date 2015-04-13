@@ -50,3 +50,4 @@ ax.w_zaxis.gridlines.set_lw(1)
 ax.elev = 30
 fig.subplots_adjust(hspace = .05, wspace = .01)
 plt.savefig('peaks1and3.png')
+#plt.show()
