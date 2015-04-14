@@ -23,9 +23,22 @@ Masters project modelling random lasers
 **[19 March](#19-march)**  
 **[7 April](#7-april)**  
 **[9 April](#9-april)**  
+**[14 April](#14-april)**  
 
 
 ___________
+# 14 April  
+* Little progress has been made with the complete system. The polarisation seems to explode when a source of any type or magnitude is added.  
+* Taking a step backwards, a more simple case has been looked at. This is simply solving Maxwell's equations in 1D in a strongly scattering medium. A single Gaussian source (width 100 timesteps) is launched at timestep 30 in what would be the gain medium. No gain or polarisation is present. The time evolution is shown in Figure 22.  
+![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/14Apr/movie.gif "Figure 22")  
+* This does everything one would expect it to do.
+ * There a slower velocity in the high refractive index parts (grey)
+ * There's reflection and transmission at each interface
+ * The PML boundary conditions do a fine job of stopping any reflections from the edges, to simulate an open system.  
+* To this, gain needs to be introduced  
+ * I'm thinking maybe pump the atoms with P<sub>r</sub>=1e7 (ish) at the timestep corresponding to the peak of the gaussian pulse only.  
+* The gain needs to be linked to the electric field via the polarisation.  
+
 # 9 April  
 * Well here's something interesting: with the population equations corrected, it's super obvious that E, H and P will never deviate from 0 unless there's some kind of pump to E and sometime. This is what Jiang and Soukoulis are talking about in there paper when they mention homogenously distributed sources to stimulate spontaneous emission.  
 * Code has been added that generates the positions of around 25 sources. These are roughly uniformly distributed in the medium (but they can only occur in the gain medium). 
