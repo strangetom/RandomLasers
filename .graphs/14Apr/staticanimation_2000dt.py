@@ -18,8 +18,8 @@ T = 7e-13 # time for simulation
 dt = dx/spc.c # time step
 N = int(T/dt)
 
-medium = np.loadtxt('Medium.txt', delimiter=',')
-E_storage = np.loadtxt('E_storage.txt', delimiter=',')
+medium = np.loadtxt('Medium_2000dt.txt', delimiter=',')
+E_storage = np.loadtxt('E_storage_2000dt.txt', delimiter=',')
 
 space = dx*np.arange(0,E_storage.shape[1], 1)
 
@@ -97,5 +97,5 @@ ax[4].yaxis.set_label_coords(-0.065, 0.5)
 
 fig.text(0.04, 0.5, 'E (Vm$^{-1}$)', ha='center', va='center',rotation='vertical',fontsize=16)
 
-fig.savefig('temp.png')
+fig.savefig('static_2000dt.png')
 #plt.show()
