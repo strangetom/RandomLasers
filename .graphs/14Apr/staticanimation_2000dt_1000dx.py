@@ -18,8 +18,8 @@ T = 7e-13 # time for simulation
 dt = dx/spc.c # time step
 N = int(T/dt)
 
-medium = np.loadtxt('Medium_2000dt_1000dx.txt', delimiter=',')
-E_storage = np.loadtxt('E_storage_2000dt_1000dx.txt', delimiter=',')
+medium = np.loadtxt('./Data/Medium_2000dt_1000dx.txt', delimiter=',')
+E_storage = np.loadtxt('./Data/E_storage_2000dt_1000dx.txt', delimiter=',')
 
 space = dx*np.arange(0,E_storage.shape[1], 1)
 
