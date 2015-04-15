@@ -22,7 +22,7 @@ epsilon = [epsilon_0]*50 + [4*epsilon_0]*60 # vector to contain permittivity at 
 W = 1.4 # strength of randomness
 b = 60
 number_of_cells = 0
-while len(epsilon) < 1000:
+while len(epsilon) < 5000:
 	a = int(100*(1+W*(np.random.rand()-0.5)))
 	new_region = [epsilon_0]*a + [4*epsilon_0]*b
 	epsilon.extend(new_region)
