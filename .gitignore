@@ -58,6 +58,7 @@ Report/
 Data/
 .graphs/21Feb/Data/
 .graphs/26Feb/Data/
+.graphs/14Apr/Data/
 
 # Files containing data
 *.npy
