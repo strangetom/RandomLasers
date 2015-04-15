@@ -53,13 +53,13 @@ def update_H(H, E):
 		H[position] = H[position] + dt/(mu_0*dx)*(E[position+1] - E[position]) - dt*sig[position]*H[position]
 	return H
 
-@nb.jit(nopython=True%r)	
+@nb.jit(nopython=True)	
 def update_E(H, E):
 	for position in range(1,E.shape[0],1):
 		E[position] = E[position] + dt/(epsilon[position]*dx)*(H[position] - H[position-1]) - dt*sig[position]*E[position]
 	return E
 
-for timestep in range(2000):
+for timestep in range(10000):
 	
 	H = update_H(H, E)
 	E[0] = E[1]
@@ -69,7 +69,7 @@ for timestep in range(2000):
 
 	E[350] += np.exp(-(timestep - 30.)**2 /100.)
 
-	if timestep % 3 == 0:
+	if timestep % 10 == 0:
 		# store data in storage list
 		E_storage = np.vstack((E_storage,E))
 		H_storage = np.vstack((H_storage,H))
