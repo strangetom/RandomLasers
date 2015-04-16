@@ -11,7 +11,7 @@ epsilon = epsilon_0
 mu_0 = spc.mu_0
 m_e = spc.m_e
 
-L = 50e-6 # approx. length of medium
+L = 5e-6 # approx. length of medium
 dx = 1e-9 # space step
 T = 7e-13 # time for simulation
 dt = dx/c # time step
@@ -22,7 +22,7 @@ epsilon = [epsilon_0]*50 + [4*epsilon_0]*60 # vector to contain permittivity at 
 W = 1.4 # strength of randomness
 b = 60
 number_of_cells = 0
-while len(epsilon) < 5000:
+while len(epsilon) < int(L/dx):
 	a = int(100*(1+W*(np.random.rand()-0.5)))
 	new_region = [epsilon_0]*a + [4*epsilon_0]*b
 	epsilon.extend(new_region)
@@ -31,7 +31,7 @@ epsilon.extend([4*epsilon_0]*60 + [epsilon_0]*50)
 epsilon = np.array(epsilon)
 # gain medium == 1, scattering medium == 0
 medium_mask = np.int32(ma.masked_greater(epsilon, epsilon_0).filled(0)/(epsilon_0))
-medium = (1-medium_mask)**2
+medium = (1-medium_mask)**2 #swaps values so scattering medium (high refractive index) = 1
 
 medium_length = epsilon.shape[0]
 
@@ -39,7 +39,6 @@ medium_length = epsilon.shape[0]
 # Storage arrays
 E_storage = [np.zeros(medium_length)]
 H_storage = [np.zeros(medium_length)]
-#sig = np.hstack((1e15*np.ones(20), 1e14*np.ones(20), 1e13*np.ones(20), 1e12*np.ones(20), 1e11*np.ones(20), 1e10*np.ones(20), 1e9*np.ones(20), 1e8*np.ones(20), 1e7*np.ones(20), 1e6*np.ones(20), 1e5*np.ones(20), np.zeros(300), 1e5*np.ones(20), 1e6*np.ones(20), 1e7*np.ones(20), 1e8*np.ones(20), 1e9*np.ones(20), 1e10*np.ones(20), 1e11*np.ones(20), 1e12*np.ones(20), 1e13*np.ones(20), 1e14*np.ones(20), 1e15*np.ones(20)))
 sigma = 100*np.arange(0,300,1)**3
 sig = np.hstack((sigma, np.zeros(medium_length-2*300), sigma[::-1]))
 
