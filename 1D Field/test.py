@@ -37,8 +37,8 @@ medium_length = epsilon.shape[0]
 
 
 # Storage arrays
-E_storage = np.zeros(medium_length)
-H_storage = np.zeros(medium_length)
+E_storage = [np.zeros(medium_length)]
+H_storage = [np.zeros(medium_length)]
 #sig = np.hstack((1e15*np.ones(20), 1e14*np.ones(20), 1e13*np.ones(20), 1e12*np.ones(20), 1e11*np.ones(20), 1e10*np.ones(20), 1e9*np.ones(20), 1e8*np.ones(20), 1e7*np.ones(20), 1e6*np.ones(20), 1e5*np.ones(20), np.zeros(300), 1e5*np.ones(20), 1e6*np.ones(20), 1e7*np.ones(20), 1e8*np.ones(20), 1e9*np.ones(20), 1e10*np.ones(20), 1e11*np.ones(20), 1e12*np.ones(20), 1e13*np.ones(20), 1e14*np.ones(20), 1e15*np.ones(20)))
 sigma = 100*np.arange(0,300,1)**3
 sig = np.hstack((sigma, np.zeros(medium_length-2*300), sigma[::-1]))
@@ -71,14 +71,17 @@ for timestep in range(10000):
 
 	if timestep % 10 == 0:
 		# store data in storage list
-		E_storage = np.vstack((E_storage,E))
-		H_storage = np.vstack((H_storage,H))
+		E_storage.append(E.copy())
+		H_storage.append(H.copy())
 
 	print(timestep, end='\r')
 
-np.savetxt('E_storage.txt',E_storage, delimiter=',')
-np.savetxt('H_storage.txt',H_storage, delimiter=',')
-np.savetxt('Medium.txt', medium, delimiter=',')
+E_storage = np.array(E_storage)
+H_storage = np.array(H_storage)
+
+np.save('E_storage',E_storage)
+np.save('H_storage',H_storage)
+np.save('Medium', medium)
 
 
 
