@@ -152,4 +152,4 @@ fig.text(0.777, 0.325, r'$L = 3 mm$''\n'r'$I_{G0} = 1\times10^{11}Wm^{-2}$', bbo
 fig.text(0.777, 0.59, r'$L = 3 mm$''\n'r'$I_{G0} = 2\times10^{11}Wm^{-2}$', bbox=dict(facecolor='none',edgecolor='black'))
 fig.text(0.77, 0.855, r'$L = 3 mm$''\n'r'$I_{G0} = 4\times10^{11}Wm^{-2}$', bbox=dict(facecolor='none',edgecolor='black'))
 
-fig.savefig('K1Dsystem length and pump variation.png')
+fig.savefig('1Dsystem length and pump variation.png')
