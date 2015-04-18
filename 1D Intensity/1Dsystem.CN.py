@@ -21,11 +21,11 @@ D = v*l/3. # diffusion coeffecient
 E_G = 6.63e-34*c/532e-9 # energy of pump photons
 E_R = 6.63e-34*c/650e-9 # energy of probe photons
 E_A = 6.63e-34*c/700e-9 # energy of emitted photons
-I_G0 = 4.e11 # average pump intensity
+I_G0 = 8.e11 # average pump intensity
 I_R0 = 0#2.e11 # average probe intensity
 
 #define space parameters
-L = 0.002 # length of medium
+L = 0.004 # length of medium
 dz = l/2 # space increment
 z = np.arange(-l/2, L+l/2+dz, dz) # vector in space
 z[0] = z[1] # modifiy space vector so pulses don't decay before entering medium
@@ -143,8 +143,7 @@ W_G_storage = np.array(W_G_storage)
 W_A_storage = np.array(W_A_storage)
 W_R_storage = np.array(W_R_storage)
 Flux = (W_A_storage[:,0])
-"""
-np.savetxt('./Data/L=1/W_A.I=4e10.L=1.txt',W_A_storage, delimiter=',',newline='\n')
-np.savetxt('./Data/L=1/N_pop.I=4e10.L=1.txt',N_pop_storage, delimiter=',',newline='\n')
-np.savetxt('./Data/L=1/Flux.I=4e10.L=1.txt',Flux, delimiter=',',newline='\n')
-"""
+
+np.savetxt('./Data/L=4/W_A.I=8e11.L=4.txt',W_A_storage, delimiter=',',newline='\n')
+np.savetxt('./Data/L=4/N_pop.I=8e11.L=4.txt',N_pop_storage, delimiter=',',newline='\n')
+np.savetxt('./Data/L=4/Flux.I=8e11.L=4.txt',Flux, delimiter=',',newline='\n')

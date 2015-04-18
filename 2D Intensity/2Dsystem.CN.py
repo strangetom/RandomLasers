@@ -19,7 +19,7 @@ D = v*l/3. # diffusion coeffecient
 
 E_G = 6.63e-34*c/532e-9 # energy of pump photons
 E_A = 6.63e-34*c/700e-9 # energy of emitted photons
-I_G0 = 2.e11 # average pump intensity
+I_G0 = 2.e10 # average pump intensity
 
 #define space parameters
 L = 0.003 # length of medium
@@ -154,25 +154,25 @@ for timestep in range(N):
 
 	if timestep % 100 == 0:
 		# store data in storage list
-		I_G_storage.append(I_G_mid_step)
-		N_pop_storage.append(N_pop)
+		#I_G_storage.append(I_G_mid_step)
+		#N_pop_storage.append(N_pop)
 		W_G_storage.append(W_G)
-		W_A_storage.append(W_A)
+		#W_A_storage.append(W_A)
 
 	print(timestep, end='\r')
 
 
 # convert storage lists to numpy arrays
-I_G_storage = np.array(I_G_storage)
-N_pop_storage = np.array(N_pop_storage)
+#I_G_storage = np.array(I_G_storage)
+#N_pop_storage = np.array(N_pop_storage)
 W_G_storage = np.array(W_G_storage)
-W_A_storage = np.array(W_A_storage)
-Flux = (W_A_storage[:,0])
+#W_A_storage = np.array(W_A_storage)
+#Flux = (W_A_storage[:,0])
 """
 np.savetxt('./Data/L=2/W_A.I=4e10.L=2.txt',W_A_storage[:,int(J/2)], delimiter=',',newline='\n')
 np.savetxt('./Data/L=2/N_pop.I=4e10.L=2.txt',N_pop_storage[:,int(J/2)], delimiter=',',newline='\n')
 np.savetxt('./Data/L=2/Flux.I=4e10.L=2.txt',np.sum(Flux,axis=1), delimiter=',',newline='\n')
 """
-np.save('N_pop', N_pop_storage)
-np.save('W_A', W_A_storage)
-np.save('W_G', W_G_storage)
+#np.save('N_pop', N_pop_storage)
+#np.save('W_A', W_A_storage)
+#np.save('W_G', W_G_storage)
