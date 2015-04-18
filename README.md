@@ -24,9 +24,15 @@ Masters project modelling random lasers
 **[7 April](#7-april)**  
 **[9 April](#9-april)**  
 **[14 April](#14-april)**  
+**[18 April](#18-april)**  
 
 
 ___________
+# 18 April  
+* Some work on the diffusion simulations: The average gain for the 1D systems was plotted for each pump intensity to show the variation and the affect the length of the medium has, see Figure 24.  
+![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/18Apr/Averagegain1D.png "Figure 24")  
+* The 2D one will also be plotted. Since that will probably give the same results-ish, it maybe worth plotting them side by side for a) ease of comparison, and b) to save space.  
+
 # 14 April  
 * Little progress has been made with the complete system. The polarisation seems to explode when a source of any type or magnitude is added.  
 * Taking a step backwards, a more simple case has been looked at. This is simply solving Maxwell's equations in 1D in a strongly scattering medium. A single Gaussian source (width 100 timesteps) is launched at timestep 30 in what would be the gain medium. No gain or polarisation is present. The time evolution is shown in Figure 22.  
