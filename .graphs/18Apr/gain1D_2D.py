@@ -111,7 +111,7 @@ lg.draw_frame(False)
 ax[1].xaxis.set_ticks_position('bottom')
 ax[1].yaxis.set_ticks_position('left')
 
-fig.text(0.5, 0.04, 'Medium length (mm)', ha='center', va='center',fontsize=16)
+fig.text(0.5, 0.04, 'Medium dimensions (mm)', ha='center', va='center',fontsize=16)
 
 fig.savefig('Averagegain.png')
 #plt.show()

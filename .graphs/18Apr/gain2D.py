@@ -46,7 +46,7 @@ ax.plot([2, 3, 4], [n_L2_4IG0*1e3, n_L3_4IG0*1e3, n_L4_4IG0*1e3], color=tableau2
 ax.plot([2, 3, 4], [n_L2_8IG0*1e3, n_L3_8IG0*1e3, n_L4_8IG0*1e3], color=tableau20[2], label=r'$I_{G0}=8\times 10^{10}\/Wm^{-2}$')
 ax.set_xlim((1.9, 4.1))
 #ax.set_ylim((0, 0.11))
-ax.set_xlabel('Medium length (mm)', fontsize=16)
+ax.set_xlabel('Medium dimensions (mm)', fontsize=16)
 ax.set_ylabel('Average gain coefficient ($10^{-3}cm^{-1}$)', fontsize=16)
 
 lg = ax.legend()
