@@ -25,9 +25,16 @@ Masters project modelling random lasers
 **[9 April](#9-april)**  
 **[14 April](#14-april)**  
 **[18 April](#18-april)**  
+**[21 April](#21-april)**  
 
 
 ___________
+# 21 April  
+* Continuing with the inactive scattering medium: The medium was excited by a Gaussian pulse of arbitrary amplitude (either 100 or 1000) and left to evolve over 250,000 time steps. The electric field between 125,000 and 250,000 time steps was recorded, summed over distance to get the time evolution of the field. This was Fourier Transformed and the absolute value taken to get the spectrum, which is shown in Figure 25.  
+![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/21Apr/100%20pulse/Spectrum.png "Figure 25")  
+* For this, the medium length was 5 microns.  
+
+
 # 18 April  
 * Some work on the diffusion simulations: The average gain for the 1D systems was plotted for each pump intensity to show the variation and the affect the length of the medium has, see Figure 24.  
 ![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/18Apr/Averagegain1D.png "Figure 24")  
