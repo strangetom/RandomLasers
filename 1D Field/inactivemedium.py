@@ -2,6 +2,7 @@ import numpy as np
 import numba as nb
 from numpy import ma
 from scipy import constants as spc
+from numpy import fft
 
 hbar = spc.hbar
 c = spc.c
@@ -46,6 +47,11 @@ sig = np.hstack((sigma, np.zeros(medium_length-2*300), sigma[::-1]))
 E = np.zeros(medium_length)
 H = np.zeros(medium_length)
 
+# Set emission location
+location = 350
+while medium[location] != 0:
+	location += 20
+
 @nb.jit(nopython=True)
 def update_H(H, E):
 	for position in range(0,H.shape[0]-1,1):
@@ -58,7 +64,7 @@ def update_E(H, E):
 		E[position] = E[position] + dt/(epsilon[position]*dx)*(H[position] - H[position-1]) - dt*sig[position]*E[position]
 	return E
 
-for timestep in range(10000):
+for timestep in range(250000):
 	
 	H = update_H(H, E)
 	E[0] = E[1]
@@ -66,9 +72,9 @@ for timestep in range(10000):
 	E = update_E(H, E)
 	H[-1] = H[-2]
 
-	E[350] += np.exp(-(timestep - 30.)**2 /100.)
+	E[location] += 100*np.exp(-(timestep-100)**2/100.)
 
-	if timestep % 10 == 0:
+	if timestep % 50 == 0 and timestep > 125000:
 		# store data in storage list
 		E_storage.append(E.copy())
 		H_storage.append(H.copy())
@@ -81,6 +87,23 @@ H_storage = np.array(H_storage)
 np.save('E_storage',E_storage)
 np.save('H_storage',H_storage)
 np.save('Medium', medium)
+
+
+# Spectrum calculations
+
+# Sum electric field in space to get time evolution
+Z = np.sum(E_storage, axis=1)
+
+# Take fourier tranform
+ftransform = np.absolute(fft.rfft(Z))
+
+# Calculate frequency limits of transform
+mintime = 125000*dt
+maxtime = 250000*dt
+freqs = np.linspace(1/maxtime, 1/mintime, ftransform.shape[0])
+
+np.save('ftransform', ftransform)
+np.save('ftransformfreqs', freqs)
 
 
 
