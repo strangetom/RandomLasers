@@ -32,7 +32,7 @@ dx = 1e-9 # space step
 T = 7e-13 # time for simulation
 dt = dx/c # time step
 N = int(T/dt)
-
+"""
 # Medium 
 epsilon = [epsilon_0]*50 + [4*epsilon_0]*60 # vector to contain permittivity at each node
 W = 1.4 # strength of randomness
@@ -47,11 +47,14 @@ epsilon.extend([4*epsilon_0]*60 + [epsilon_0]*50)
 epsilon = np.array(epsilon)
 # gain medium == 1, scattering medium == 0
 medium_mask = np.int32(ma.masked_greater(epsilon, epsilon_0).filled(0)/(epsilon_0))
-#medium = (1-medium_mask)**2 #swaps values so scattering medium (high refractive index) = 1
+medium = (1-medium_mask)**2 #swaps values so scattering medium (high refractive index) = 1
+"""
+epsilon = np.load('Epsilon.npy')
+# gain medium == 1, scattering medium == 0
+medium_mask = np.int32(ma.masked_greater(epsilon, epsilon_0).filled(0)/(epsilon_0))
+medium = (1-medium_mask)**2 #swaps values so scattering medium (high refractive index) = 1
 
 medium_length = epsilon.shape[0]
-
-
 
 # PML sigma array
 sigma = 100*np.arange(0,300,1)**3
@@ -118,8 +121,12 @@ def update_N(N0 ,N1, N2, N3, E, P, P_prev, P_r):
 			N0_next[position] = N0[position] + dt*(N1[position]/tau_10 - P_r*N0[position])
 	return N0_next, N1_next, N2_next, N3_next
 
-P_r = 1e6
+
 for timestep in range(250000):
+	if timestep == 100:
+		P_r = 1e6
+	else:
+		P_r = 0
 
 	P, P_prev = update_P(P, P_prev, E, N1, N2)
 	
@@ -129,8 +136,7 @@ for timestep in range(250000):
 
 	N0, N1, N2, N3 = update_N(N0 ,N1, N2, N3, E, P, P_prev, P_r)
 
-
-	E[location] += 10*np.exp(-(timestep-100)**2/100.)
+	E[location] += np.exp(-(timestep-100)**2/100.)
 
 	if timestep % 100 == 0 and timestep > 125000:
 		# store data in storage list
@@ -149,7 +155,7 @@ H_storage = np.array(H_storage)
 
 np.save('E_storage',E_storage)
 np.save('H_storage',H_storage)
-np.save('Medium', medium)
+np.save('Epsilon', epsilon)
 
 # Spectrum calculations
 
