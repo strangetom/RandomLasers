@@ -12,8 +12,8 @@ for i in range(len(tableau20)):
     r, g, b = tableau20[i]  
     tableau20[i] = (r / 255., g / 255., b / 255.)
 
-E_storage = np.loadtxt('E_storage.txt', delimiter=',')
-medium = np.loadtxt('Medium.txt', delimiter=',')
+E_storage = np.loadtxt('./Data/E_storage_2000dt_1000dx.txt', delimiter=',')
+medium = np.loadtxt('./Data/Medium_2000dt_1000dx.txt', delimiter=',')
 
 
 fig, ax = plt.subplots()
@@ -21,8 +21,8 @@ def animate(i):
     ax.cla()
     line = ax.plot(E_storage[i*3],color=tableau20[6])
     ax.fill_between(np.arange(0,medium.shape[0],1),1,-1,where=medium,color='0.7')
-    ax.plot([0, 0], [-1, 1], color='k', linewidth=3)
-    ax.plot([medium.shape[0], medium.shape[0]], [-1, 1], color='k', linewidth=3)
+    ax.plot([0, 0], [-1, 1], color='k', linewidth=3) # boundary at 0
+    ax.plot([medium.shape[0], medium.shape[0]], [-1, 1], color='k', linewidth=3) # bounary at the end
     ax.set_ylim((-1.1, 1.1))
     ax.set_xlim((-10, medium.shape[0]+10))
     ax.xaxis.set_ticks_position('bottom')
