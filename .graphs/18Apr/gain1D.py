@@ -54,7 +54,7 @@ n_L4_2IG0 = N_t*sig_em*np.mean(np.mean(n_L4_2IG0, axis=1), axis=0)
 n_L4_4IG0 = N_t*sig_em*np.mean(np.mean(n_L4_4IG0, axis=1), axis=0)
 n_L4_8IG0 = N_t*sig_em*np.mean(np.mean(n_L4_8IG0, axis=1), axis=0)
 
-fig, ax = plt.subplots(figsize=(14,8))
+fig, ax = plt.subplots(figsize=(12,8))
 
 ax.plot([1, 2, 3, 4], [n_L1_IG0*1e3, n_L2_IG0*1e3, n_L3_IG0*1e3, n_L4_IG0*1e3], color=tableau20[0], label=r'$I_{G0}=1\times 10^{11}\/Wm^{-2}$')
 ax.plot([1, 2, 3, 4], [n_L1_2IG0*1e3, n_L2_2IG0*1e3, n_L3_2IG0*1e3, n_L4_2IG0*1e3], color=tableau20[6], label=r'$I_{G0}=2\times 10^{11}\/Wm^{-2}$')
@@ -71,5 +71,5 @@ lg.draw_frame(False)
 ax.xaxis.set_ticks_position('bottom')
 ax.yaxis.set_ticks_position('left')
 
-fig.savefig('Averagegain.png')
+fig.savefig('Averagegain1D.png')
 #plt.show()
