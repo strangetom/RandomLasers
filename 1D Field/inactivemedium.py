@@ -55,13 +55,13 @@ while medium[location] != 0:
 @nb.jit(nopython=True)
 def update_H(H, E):
 	for position in range(0,H.shape[0]-1,1):
-		H[position] = H[position] + dt/(mu_0*dx)*(E[position+1] - E[position]) - dt*sig[position]*H[position]
+		H[position] = H[position] + (E[position+1] - E[position]) - dt*sig[position]*H[position]
 	return H
 
 @nb.jit(nopython=True)	
 def update_E(H, E):
 	for position in range(1,E.shape[0],1):
-		E[position] = E[position] + dt/(epsilon[position]*dx)*(H[position] - H[position-1]) - dt*sig[position]*E[position]
+		E[position] = E[position] + epsilon_0/epsilon[position]*(H[position] - H[position-1]) - dt*sig[position]*E[position]
 	return E
 
 for timestep in range(250000):
@@ -72,7 +72,7 @@ for timestep in range(250000):
 	E = update_E(H, E)
 	H[-1] = H[-2]
 
-	E[location] += 100*np.exp(-(timestep-100)**2/100.)
+	E[location] += 1000*np.exp(-(timestep-100)**2/100.)
 
 	if timestep % 50 == 0 and timestep > 125000:
 		# store data in storage list
