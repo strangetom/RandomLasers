@@ -18,22 +18,10 @@ T = 7e-13 # time for simulation
 dt = dx/c # time step
 N = int(T/dt)
 
-# Medium 
-epsilon = [epsilon_0]*50 + [4*epsilon_0]*60 # vector to contain permittivity at each node
-W = 1.4 # strength of randomness
-b = 60
-number_of_cells = 0
-while len(epsilon) < int(L/dx):
-	a = int(100*(1+W*(np.random.rand()-0.5)))
-	new_region = [epsilon_0]*a + [4*epsilon_0]*b
-	epsilon.extend(new_region)
-	number_of_cells += 1
-epsilon.extend([4*epsilon_0]*60 + [epsilon_0]*50)
-epsilon = np.array(epsilon)
+epsilon = np.load('epsilon.npy')
 # gain medium == 1, scattering medium == 0
 medium_mask = np.int32(ma.masked_greater(epsilon, epsilon_0).filled(0)/(epsilon_0))
 medium = (1-medium_mask)**2 #swaps values so scattering medium (high refractive index) = 1
-
 medium_length = epsilon.shape[0]
 
 
@@ -72,7 +60,7 @@ for timestep in range(250000):
 	E = update_E(H, E)
 	H[-1] = H[-2]
 
-	E[location] += 1000*np.exp(-(timestep-100)**2/100.)
+	E[location] += np.exp(-(timestep-100)**2/100.)
 
 	if timestep % 50 == 0 and timestep > 125000:
 		# store data in storage list
