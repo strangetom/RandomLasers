@@ -82,18 +82,10 @@ def update_E(H, E):
 		E[position] = E[position] + epsilon_0/epsilon[position]*(H[position] - H[position-1]) - e/(epsilon[position]*E_max)*(P[position] - P_prev[position]) - dt*sig[position]*E[position]
 	H[-1] = H[-2]
 	return E, H
-"""
+
 @nb.jit()
 def update_P(P, P_prev, E, N1, N2):
-	temp = P
-	for position in range(0, P.shape[0], 1):
-		P[position] = (gamma_r*e*E_max*N_t)/(gamma_c*m_e*(1 + dw_a*dt))*(N1[position] - N2[position])*E[position] + (2 - w_a**2*dt**2)/(1 + dw_a*dt)*P[position] + (dw_a*dt - 1)/(1 + dw_a*dt)*P_prev[position]
-	P_prev = temp
-	return P, P_prev
-"""
-@nb.jit()
-def update_P(P, P_prev, E, N1, N2):
-	temp = P
+	temp = P.copy()
 	for position in range(0, P.shape[0], 1):
 		P[position] = (gamma_r*e*E_max*N_t)/(gamma_c*m_e*(1 + dw_a*dt))*(N1[position] - N2[position])*E[position] + (2 - w_a**2*dt**2 + dw_a*dt)/(1 + dw_a*dt)*P[position] - 1/(1 + dw_a*dt)*P_prev[position]
 	P_prev = temp
@@ -114,7 +106,7 @@ def update_N(N0 ,N1, N2, N3, E, P, P_prev, P_r):
 	return N0_next, N1_next, N2_next, N3_next
 
 P_r = 1e7/N_t
-for timestep in range(250000):
+for timestep in range(150):
 
 	P, P_prev = update_P(P, P_prev, E, N1, N2)
 	
@@ -136,7 +128,7 @@ for timestep in range(250000):
 		N2_storage.append(N2.copy())
 		N3_storage.append(N3.copy())
 
-	print(timestep, end='\r')
+	#print(timestep, end='\r')
 
 E_storage = np.array(E_storage)
 H_storage = np.array(H_storage)
