@@ -62,19 +62,15 @@ for timestep in range(250000):
 
 	E[location] += np.exp(-(timestep-100)**2/100.)
 
-	if timestep % 50 == 0 and timestep > 125000:
+	if timestep % 1 == 0 and timestep > 125000:
 		# store data in storage list
 		E_storage.append(E.copy())
-		H_storage.append(H.copy())
 
 	print(timestep, end='\r')
 
 E_storage = np.array(E_storage)
-H_storage = np.array(H_storage)
 
-np.save('E_storage',E_storage)
-np.save('H_storage',H_storage)
-np.save('Medium', medium)
+np.save('E_storage',E_storage))
 
 
 # Spectrum calculations
@@ -85,13 +81,7 @@ Z = np.sum(E_storage, axis=1)
 # Take fourier tranform
 ftransform = np.absolute(fft.rfft(Z))
 
-# Calculate frequency limits of transform
-mintime = 125000*dt
-maxtime = 250000*dt
-freqs = np.linspace(1/maxtime, 1/mintime, ftransform.shape[0])
-
 np.save('ftransform', ftransform)
-np.save('ftransformfreqs', freqs)
 
 
 
