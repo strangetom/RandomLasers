@@ -9,7 +9,7 @@ hbar = spc.hbar
 c = spc.c
 e = spc.e
 epsilon_0 = spc.epsilon_0
-epsilon = epsilon_0
+#epsilon = epsilon_0
 mu_0 = spc.mu_0
 m_e = spc.m_e
 
@@ -32,28 +32,12 @@ dx = 1e-9 # space step
 T = 7e-13 # time for simulation
 dt = dx/c # time step
 N = int(T/dt)
-"""
-# Medium 
-epsilon = [epsilon_0]*50 + [4*epsilon_0]*60 # vector to contain permittivity at each node
-W = 1.4 # strength of randomness
-b = 60
-number_of_cells = 0
-while len(epsilon) < int(L/dx):
-	a = int(100*(1+W*(np.random.rand()-0.5)))
-	new_region = [epsilon_0]*a + [4*epsilon_0]*b
-	epsilon.extend(new_region)
-	number_of_cells += 1
-epsilon.extend([4*epsilon_0]*60 + [epsilon_0]*50)
-epsilon = np.array(epsilon)
-# gain medium == 1, scattering medium == 0
-medium_mask = np.int32(ma.masked_greater(epsilon, epsilon_0).filled(0)/(epsilon_0))
-medium = (1-medium_mask)**2 #swaps values so scattering medium (high refractive index) = 1
-"""
-epsilon = np.load('Epsilon.npy')
-# gain medium == 1, scattering medium == 0
-medium_mask = np.int32(ma.masked_greater(epsilon, epsilon_0).filled(0)/(epsilon_0))
-medium = (1-medium_mask)**2 #swaps values so scattering medium (high refractive index) = 1
 
+# Load pregenerated medium
+epsilon = np.load('epsilon.npy')
+# gain medium == 1, scattering medium == 0
+medium_mask = np.int32(ma.masked_greater(epsilon, epsilon_0).filled(0)/(epsilon_0))
+medium = (1-medium_mask)**2 #swaps values so scattering medium (high refractive index) = 1
 medium_length = epsilon.shape[0]
 
 # PML sigma array
@@ -65,7 +49,7 @@ sig = np.hstack((sigma, np.zeros(medium_length-2*300), sigma[::-1]))
 E_storage = [np.zeros(medium_length)]
 H_storage = [np.zeros(medium_length)]
 P_storage = [np.zeros(medium_length)]
-N0_storage = [N_t*np.ones(medium_length)]
+N0_storage = [np.ones(medium_length)]
 N1_storage = [np.zeros(medium_length)]
 N2_storage = [np.zeros(medium_length)]
 N3_storage = [np.zeros(medium_length)]
@@ -75,7 +59,7 @@ E = np.zeros(medium_length)
 H = np.zeros(medium_length)
 P = np.zeros(medium_length)
 P_prev = np.zeros(medium_length)
-N0 = N_t*np.ones(medium_length)
+N0 = np.ones(medium_length)
 N1 = np.zeros(medium_length)
 N2 = np.zeros(medium_length)
 N3 = np.zeros(medium_length)
@@ -98,12 +82,20 @@ def update_E(H, E):
 		E[position] = E[position] + epsilon_0/epsilon[position]*(H[position] - H[position-1]) - e/(epsilon[position]*E_max)*(P[position] - P_prev[position]) - dt*sig[position]*E[position]
 	H[-1] = H[-2]
 	return E, H
-
+"""
 @nb.jit()
 def update_P(P, P_prev, E, N1, N2):
 	temp = P
 	for position in range(0, P.shape[0], 1):
-		P[position] = (gamma_r*e*E_max*N_t)/(gamma_c*m_e*(1 + dw_a*dt))*(N1[position] - N2[position])*E[position] + (2 + w_a**2*dt**2)/(1 + dw_a*dt)*P[position] + (dw_a*dt - 1)/(1 + dw_a*dt)*P_prev[position]
+		P[position] = (gamma_r*e*E_max*N_t)/(gamma_c*m_e*(1 + dw_a*dt))*(N1[position] - N2[position])*E[position] + (2 - w_a**2*dt**2)/(1 + dw_a*dt)*P[position] + (dw_a*dt - 1)/(1 + dw_a*dt)*P_prev[position]
+	P_prev = temp
+	return P, P_prev
+"""
+@nb.jit()
+def update_P(P, P_prev, E, N1, N2):
+	temp = P
+	for position in range(0, P.shape[0], 1):
+		P[position] = (gamma_r*e*E_max*N_t)/(gamma_c*m_e*(1 + dw_a*dt))*(N1[position] - N2[position])*E[position] + (2 - w_a**2*dt**2 + dw_a*dt)/(1 + dw_a*dt)*P[position] - 1/(1 + dw_a*dt)*P_prev[position]
 	P_prev = temp
 	return P, P_prev
 
@@ -121,12 +113,8 @@ def update_N(N0 ,N1, N2, N3, E, P, P_prev, P_r):
 			N0_next[position] = N0[position] + dt*(N1[position]/tau_10 - P_r*N0[position])
 	return N0_next, N1_next, N2_next, N3_next
 
-
+P_r = 1e7/N_t
 for timestep in range(250000):
-	if timestep == 100:
-		P_r = 1e6
-	else:
-		P_r = 0
 
 	P, P_prev = update_P(P, P_prev, E, N1, N2)
 	
@@ -152,10 +140,14 @@ for timestep in range(250000):
 
 E_storage = np.array(E_storage)
 H_storage = np.array(H_storage)
+P_storage = np.array(P_storage)
+N0_storage = np.array(N0_storage)
+N1_storage = np.array(N1_storage)
+N2_storage = np.array(N2_storage)
+N3_storage = np.array(N3_storage)
 
-np.save('E_storage',E_storage)
-np.save('H_storage',H_storage)
-np.save('Epsilon', epsilon)
+#np.save('E_storage',E_storage)
+#np.save('H_storage',H_storage)
 
 # Spectrum calculations
 
@@ -165,10 +157,5 @@ Z = np.sum(E_storage, axis=1)
 # Take fourier tranform
 ftransform = np.absolute(fft.rfft(Z))
 
-# Calculate frequency limits of transform
-mintime = 125000*dt
-maxtime = 250000*dt
-freqs = np.linspace(1/maxtime, 1/mintime, ftransform.shape[0])
-
+# Save data
 np.save('ftransform', ftransform)
-np.save('ftransformfreqs', freqs)
