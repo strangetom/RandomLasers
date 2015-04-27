@@ -35,6 +35,7 @@ ___________
 ```python
 freqs = np.arange(0, ftransform.shape[0], 1)/dt/ftransform.shape[0]
 ```
+which makes the spectrum below this wrong on the x-axis.
 
 # 21 April  
 * Continuing with the inactive scattering medium: The medium was excited by a Gaussian pulse of arbitrary amplitude (either 100 or 1000) and left to evolve over 250,000 time steps. The electric field between 125,000 and 250,000 time steps was recorded, summed over distance to get the time evolution of the field. This was Fourier Transformed and the absolute value taken to get the spectrum, which is shown in Figure 25.  
