@@ -70,8 +70,7 @@ for timestep in range(250000):
 
 E_storage = np.array(E_storage)
 
-np.save('E_storage',E_storage))
-
+np.save('E_storage',E_storage)
 
 # Spectrum calculations
 
