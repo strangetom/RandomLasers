@@ -20,7 +20,7 @@ ax = fig.gca(projection='3d')
 def update(i, ax, fig):
 	ax.cla()
 	Z = data[i*10]
-	surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1,  cmap=cm.jet,linewidth=0)
+	surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap=cm.jet, linewidth=0)
 	ax.set_zlim(0, 1.1*data.max())
 	ax.set_xlabel('X distance (mm)')
 	ax.set_ylabel('Y distance (mm)')
