@@ -62,15 +62,13 @@ for timestep in range(250000):
 
 	E[location] += np.exp(-(timestep-100)**2/100.)
 
-	if timestep % 1 == 0 and timestep > 125000:
+	if timestep % 1 == 5 and timestep > 200000:
 		# store data in storage list
 		E_storage.append(E.copy())
 
 	print(timestep, end='\r')
 
 E_storage = np.array(E_storage)
-
-np.save('E_storage',E_storage)
 
 # Spectrum calculations
 
@@ -80,6 +78,8 @@ Z = np.sum(E_storage, axis=1)
 # Take fourier tranform
 ftransform = np.absolute(fft.rfft(Z))
 
+# Save data
+np.save('Z', Z)
 np.save('ftransform', ftransform)
 
 

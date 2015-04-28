@@ -5,7 +5,7 @@ from scipy import constants as spc
 epsilon_0 = spc.epsilon_0
 
 # Simulation parameters
-L = 5e-6 # approx. length of medium
+L = 10e-6 # approx. length of medium
 dx = 1e-9 # space step
 
 # Medium 

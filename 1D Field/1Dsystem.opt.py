@@ -19,7 +19,7 @@ tau_21 = 1e-9 # lifetime of level 2
 tau_10 = 1e-11 # lifetime of level 1
 T_2 = 2.18e-14 # mean time between dephasing events, collision time
 N_t = 5.5*spc.N_A # total number of excitable atoms.
-E_max = 1 # Maximum E field. Guess. 
+E_max = 1e8 # Maximum E field. Guess. 
 
 # Derived constants
 gamma_r = 1/tau_21
@@ -27,7 +27,7 @@ gamma_c = spc.e**2*w_a**2/(spc.m_e*6*pi*spc.epsilon_0*spc.c**3)
 dw_a = 1/tau_21 + 2/T_2
 
 # Simulation parameters
-L = 5e-6 # approx. length of medium
+L = 50e-6 # approx. length of medium
 dx = 1e-9 # space step
 T = 7e-13 # time for simulation
 dt = dx/c # time step
@@ -109,7 +109,7 @@ def update_N(N0 ,N1, N2, N3, E, P, P_prev, P_r):
 for timestep in range(250000):
 	
 	if timestep < 400:
-		P_r = 1e15
+		P_r = 1e7
 	else:
 		P_r = 0
 	
@@ -135,8 +135,8 @@ for timestep in range(250000):
 
 	print(timestep, end='\r')
 
-#E_storage = np.array(E_storage)
-H_storage = np.array(H_storage)
+E_storage = np.array(E_storage)
+#H_storage = np.array(H_storage)
 #P_storage = np.array(P_storage)
 #N0_storage = np.array(N0_storage)
 #N1_storage = np.array(N1_storage)
