@@ -19,10 +19,10 @@ D = v*l/3. # diffusion coeffecient
 
 E_G = 6.63e-34*c/532e-9 # energy of pump photons
 E_A = 6.63e-34*c/700e-9 # energy of emitted photons
-I_G0 = 2.e10 # average pump intensity
+I_G0 = 8.e10 # average pump intensity
 
 #define space parameters
-L = 0.003 # length of medium
+L = 0.004 # length of medium
 dz = l/2 # space increment
 z = np.arange(-l/2, L+l/2+dz, dz) # vector in space
 z[0] = z[1] # modifiy space vector so pulses don't decay before entering medium
@@ -31,7 +31,7 @@ J = z.shape[0] # number of space steps
 
 
 # q is the number of space steps in from the sides that we're removing
-q = 15
+q = 1
 # change the shape of N_t
 N_t = np.vstack( (np.zeros((q,J)), 1.6e25*np.ones((J-2*q,J)), np.zeros((q,J)) ) ) # total concentration of laser particles
 
@@ -155,24 +155,24 @@ for timestep in range(N):
 	if timestep % 100 == 0:
 		# store data in storage list
 		#I_G_storage.append(I_G_mid_step)
-		#N_pop_storage.append(N_pop)
+		N_pop_storage.append(N_pop)
 		W_G_storage.append(W_G)
-		#W_A_storage.append(W_A)
+		W_A_storage.append(W_A)
 
 	print(timestep, end='\r')
 
 
 # convert storage lists to numpy arrays
 #I_G_storage = np.array(I_G_storage)
-#N_pop_storage = np.array(N_pop_storage)
+N_pop_storage = np.array(N_pop_storage)
 W_G_storage = np.array(W_G_storage)
-#W_A_storage = np.array(W_A_storage)
+W_A_storage = np.array(W_A_storage)
 #Flux = (W_A_storage[:,0])
 """
 np.savetxt('./Data/L=2/W_A.I=4e10.L=2.txt',W_A_storage[:,int(J/2)], delimiter=',',newline='\n')
 np.savetxt('./Data/L=2/N_pop.I=4e10.L=2.txt',N_pop_storage[:,int(J/2)], delimiter=',',newline='\n')
 np.savetxt('./Data/L=2/Flux.I=4e10.L=2.txt',np.sum(Flux,axis=1), delimiter=',',newline='\n')
 """
-#np.save('N_pop', N_pop_storage)
-#np.save('W_A', W_A_storage)
-#np.save('W_G', W_G_storage)
+np.save('N_pop_storage', N_pop_storage)
+np.save('W_A_storage', W_A_storage)
+np.save('W_G_storage', W_G_storage)
