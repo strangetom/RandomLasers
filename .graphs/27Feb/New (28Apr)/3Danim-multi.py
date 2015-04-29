@@ -27,9 +27,9 @@ def update(i, ax1, ax2, fig):
 	ax1.cla()
 	ax2.cla()
 
-	figtext.set_text("Time: {:.3f} ns".format(i*5e-10/1e-9))
+	figtext.set_text("Time: {:.3f} ns".format(i*2.5e-10/1e-9))
 
-	Z_1 = data_1[i*10]
+	Z_1 = data_1[i*5]
 	surf = ax1.plot_surface(X, Y, Z_1, rstride=1, cstride=1, cmap=cm.RdBu, linewidth=0)
 	ax1.set_zlim(0, 1.1*data_1.max())
 	ax1.set_xlabel('X distance (mm)')
@@ -43,7 +43,7 @@ def update(i, ax1, ax2, fig):
 	ax1.set_title("Population")
 	ax1.view_init(elev=15.)
 
-	Z_2 = data_2[i*10]
+	Z_2 = data_2[i*5]
 	surf = ax2.plot_surface(X, Y, Z_2, rstride=1, cstride=1, cmap=cm.RdBu, linewidth=0)
 	ax2.set_zlim(0, 1.1*data_2.max())
 	ax2.set_xlabel('X distance (mm)')
@@ -57,7 +57,7 @@ def update(i, ax1, ax2, fig):
 	ax2.set_title("ASE")
 	ax2.view_init(elev=15.)
 
-anim = animation.FuncAnimation(fig, update, fargs=(ax1, ax2, fig), frames=int(data_1.shape[0]/10) )
+anim = animation.FuncAnimation(fig, update, fargs=(ax1, ax2, fig), frames=int(data_1.shape[0]/5) )
 
 anim.save('W_A+N_pop.mp4', fps=5, bitrate=-1, codec="libx264")
 #plt.show()
