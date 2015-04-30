@@ -27,9 +27,9 @@ gamma_c = spc.e**2*w_a**2/(spc.m_e*6*pi*spc.epsilon_0*spc.c**3)
 dw_a = 1/tau_21 + 2/T_2
 
 # Simulation parameters
-L = 50e-6 # approx. length of medium
+L = 10e-6 # approx. length of medium
 dx = 1e-9 # space step
-T = 7e-13 # time for simulation
+T = 20e-12 # time for simulation
 dt = dx/c # time step
 N = int(T/dt)
 
@@ -105,14 +105,14 @@ def update_N(N0 ,N1, N2, N3, E, P, P_prev, P_r):
 			N0_next[position] = N0[position] + dt*(N1[position]/tau_10 - P_r*N0[position])
 	return N0_next, N1_next, N2_next, N3_next
 
-
-for timestep in range(250000):
-	
+P_r = 1e4
+for timestep in range(N):
+	"""
 	if timestep < 400:
 		P_r = 1e7
 	else:
 		P_r = 0
-	
+	"""
 	P, P_prev = update_P(P, P_prev, E, N1, N2)
 	
 	H, E = update_H(H, E)
@@ -123,7 +123,7 @@ for timestep in range(250000):
 
 	E[location] += np.exp(-(timestep-100)**2/100.)
 
-	if timestep % 1 == 0 and timestep > 125000:
+	if timestep % 50 == 0 and timestep > int(N/2):
 		# store data in storage list
 		E_storage.append(E.copy())
 		#H_storage.append(H.copy())
