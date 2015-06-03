@@ -20,3 +20,17 @@ The required libraries are:
 
 For the field equation simulations an additional library is required:  
 * __numba 0.18.1__  
+
+____  
+#### Results
+Below is a graphical summary of results:  
+1D intensity simulations  
+![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/21Feb/1Dsystem%20length%20and%20pump%20variation.png)  
+2D intensity simulations  
+![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/26Feb/2D%20system%20length%20and%20pump%20variation.png)  
+Animation of 2D intensity simulations ([video here](https://github.com/strangetom/RandomLasers/blob/master/.graphs/27Feb/New2%20(28Apr)/W_A%2BN_pop.mp4))  
+![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/27Feb/New2%20(28Apr)/W_A%2BN_pop.gif)  
+1D field equations in an inactive medium ([video here](https://github.com/strangetom/RandomLasers/blob/master/.graphs/14Apr/movie_2000dt_1000dx.mp4))  
+![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/14Apr/movie_2000dt_1000dx.gif)  
+1D field equation in an active medium. This did not work.  
+![alt-text](https://github.com/strangetom/RandomLasers/blob/master/.graphs/30Apr/Active_spectra.png)  
